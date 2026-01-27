@@ -41,7 +41,7 @@ You are helping me initialize a new project. Guide me through:
 
 1. **Generate today's date** in YYYY-MM-DD format
 2. **Replace ALL placeholders** in these files:
-   - `CONTEXT.md`
+   - `CLAUDE.md`
    - `STATE.md`
    - `DEVLOG.md`
    - `PROJECT.md`
@@ -125,7 +125,7 @@ Ask about the technical foundation:
    | Go | `Bash(go *)` |
    | Docker | `Bash(docker *)`, `Bash(docker-compose *)` |
 
-2. **Update `CONTEXT.md`** - Fill in the Tech Stack section with their choices
+2. **Update `CLAUDE.md`** - Fill in the Tech Stack section with their choices
 
 **Confirm:**
 ```
@@ -136,7 +136,7 @@ Package Manager: [package manager]
 Commands: run=[cmd], test=[cmd], lint=[cmd]
 
 Updated settings.json with permissions for your stack.
-Updated CONTEXT.md with tech stack details.
+Updated CLAUDE.md with tech stack details.
 ```
 
 ### Step 4: Phase Breakdown
@@ -157,7 +157,7 @@ Once I've approved the plan, generate/update:
 2. **REQUIREMENTS.md** - List all requirements with phase mappings
 3. **ROADMAP.md** - Create the phase structure
 4. **STATE.md** - Initialize with "Project initialized" entry
-5. **CONTEXT.md** - Update the `[PROJECT NAME]` and tech stack sections if this is a fresh project
+5. **CLAUDE.md** - Update the `[PROJECT NAME]` and tech stack sections if this is a fresh project
 
 ### Step 6: Confirm and Offer Next Step
 
@@ -171,7 +171,7 @@ Files created/updated:
 - REQUIREMENTS.md - What you're building
 - ROADMAP.md - [N] phases planned
 - STATE.md - Session tracking started
-- CONTEXT.md - Tech stack configured
+- CLAUDE.md - Tech stack configured
 - settings.json - Permissions configured
 
 Your project is ready! Phase 1 is: [Phase 1 name]

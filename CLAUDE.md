@@ -266,7 +266,7 @@ When multiple sessions work on the same task list:
 
 ### Session Start Checklist
 At the start of each session, The AI should read:
-1. This file (CONTEXT.md)
+1. This file (CLAUDE.md)
 2. STATE.md - Current focus, recent decisions, handoff notes
 3. DEVLOG.md - Recent sessions, active bugs, progress history
 4. `.planning/intel/summary.md` - Codebase patterns (if exists)
@@ -292,7 +292,7 @@ At the start of each session, The AI should read:
 ### Recovery Steps
 1. Update STATE.md and DEVLOG.md with current status (`/pause-work`)
 2. Start a new AI session
-3. The AI reads fresh context from CONTEXT.md, STATE.md, DEVLOG.md, and intel
+3. The AI reads fresh context from CLAUDE.md, STATE.md, DEVLOG.md, and intel
 
 ---
 
@@ -300,7 +300,7 @@ At the start of each session, The AI should read:
 
 > The AI should proactively maintain project knowledge without being asked.
 
-### When to Update CONTEXT.md (Lessons Learned)
+### When to Update CLAUDE.md (Lessons Learned)
 
 The AI MUST add a new entry to "Lessons Learned" when:
 1. **User corrects a mistake** - Record what was wrong and the correct approach

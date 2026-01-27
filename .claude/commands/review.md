@@ -58,7 +58,7 @@ Examine the code across these dimensions:
 - Does it follow the language/framework conventions?
 - Are errors handled appropriately?
 - Proper use of async/await, promises, or similar?
-- Following the project's coding standards (check CONTEXT.md)?
+- Following the project's coding standards (check CLAUDE.md)?
 - DRY (Don't Repeat Yourself) principle followed?
 
 #### 6. Testing
@@ -293,5 +293,5 @@ Once I've completed the review, I'll ask:
 
 - If the diff is empty, I'll let you know and ask what you'd like me to review
 - For large changes (>500 lines), I'll ask if you want me to focus on specific files
-- I'll check CONTEXT.md for project-specific rules and preferences
+- I'll check CLAUDE.md for project-specific rules and preferences
 - I'll consider the context: proof-of-concept code gets different scrutiny than production code

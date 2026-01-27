@@ -42,7 +42,7 @@ You are executing plans for Phase $arguments.phase.
 Before starting:
 - [ ] Verify git working directory is clean (or stash changes)
 - [ ] Confirm all prerequisites from plans are met
-- [ ] Read project conventions from CONTEXT.md
+- [ ] Read project conventions from CLAUDE.md
 - [ ] Read codebase patterns from `.planning/intel/summary.md` (if exists)
 
 ### Step 3: Create Task List

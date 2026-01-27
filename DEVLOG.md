@@ -72,7 +72,7 @@ SESSION TEMPLATE - Copy this for new sessions:
 - [Decision and rationale]
 
 #### Patterns Learned
-- [Pattern or lesson for CONTEXT.md]
+- [Pattern or lesson for CLAUDE.md]
 
 #### Commits
 - `hash` message

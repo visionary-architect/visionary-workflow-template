@@ -53,7 +53,7 @@ These are disabled by default. Enable in `settings.json` if you want session ana
 - **Command count:** 19 → 25
 - **SETUP.md:** Added Multi-Session Workers workflow section and updated directory structure
 - **README.md:** Added Task Queue Commands table
-- **CONTEXT.md:** Added Task Queue Commands reference section
+- **CLAUDE.md:** Added Task Queue Commands reference section
 
 ### Summary
 
@@ -77,7 +77,7 @@ If upgrading from v1.0:
 4. Copy new intel hooks if desired
 5. Update `settings.json` with new hook configurations
 
-Or start fresh with v1.1 and migrate your `CONTEXT.md` customizations.
+Or start fresh with v1.1 and migrate your `CLAUDE.md` customizations.
 
 ---
 

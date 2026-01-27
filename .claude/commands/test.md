@@ -36,7 +36,7 @@ Look for indicators to determine the test framework:
 - Test command usually: `pytest`, `python -m pytest`, `python -m unittest`
 
 **Other indicators:**
-- Check CONTEXT.md for the "Run tests" command
+- Check CLAUDE.md for the "Run tests" command
 - Look at file extensions (.test.js, .spec.ts, _test.py, etc.)
 
 ### Step 2: Identify Relevant Tests
@@ -133,7 +133,7 @@ pytest --cov               # With coverage
 ```
 
 **Other:**
-- Check CONTEXT.md for project-specific commands
+- Check CLAUDE.md for project-specific commands
 - Ask me if uncertain
 
 ---
@@ -168,7 +168,7 @@ pytest --cov               # With coverage
 
 **If test command not found:**
 1. Check if dependencies are installed (`npm install`, `pip install -r requirements.txt`)
-2. Check CONTEXT.md for correct test command
+2. Check CLAUDE.md for correct test command
 3. Ask me what test framework is being used
 
 **If tests hang:**

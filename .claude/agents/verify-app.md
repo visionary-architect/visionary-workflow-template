@@ -100,7 +100,7 @@ Testing Scope:
 
 **Execute the test suite:**
 
-1. **Find the test command** (check CONTEXT.md or package.json/setup.py)
+1. **Find the test command** (check CLAUDE.md or package.json/setup.py)
 2. **Run relevant tests first** (faster feedback)
 3. **Run full test suite** (comprehensive check)
 

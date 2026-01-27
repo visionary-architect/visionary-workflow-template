@@ -337,7 +337,7 @@ After providing all suggestions, ask:
 ## Project Integration
 
 When simplifying code in a project:
-1. **Check CONTEXT.md** for project-specific patterns and conventions
+1. **Check CLAUDE.md** for project-specific patterns and conventions
 2. **Respect existing abstractions** that follow documented patterns
 3. **Don't simplify away** intentional architecture decisions
 

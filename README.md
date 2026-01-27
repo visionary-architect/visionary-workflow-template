@@ -48,7 +48,7 @@ See [SETUP.md](SETUP.md) for detailed instructions and customization options.
 | `.claude/agents/` | Specialized AI agents |
 | `.claude/hooks/` | Validators and codebase indexer |
 | `.planning/` | Planning artifacts (auto-populated) |
-| `CONTEXT.md` | Project context for the AI |
+| `CLAUDE.md` | Project context for the AI |
 | `STATE.md` | Current session state |
 | `DEVLOG.md` | Development history |
 

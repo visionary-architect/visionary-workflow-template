@@ -13,6 +13,23 @@ This guide walks you through setting up visionary_template_1 for your project.
 
 ---
 
+## Platform Flexibility
+
+This template is designed for Claude Code, which looks for specific file and directory names:
+
+| File/Directory | Purpose | Claude Code Requirement |
+|----------------|---------|-------------------------|
+| `CLAUDE.md` | Project context for the AI | **Required name** - Claude Code auto-reads this |
+| `.claude/` | Commands, hooks, settings | **Required name** - Claude Code convention |
+| `CONTEXT.md` (in subdirs) | Component-specific context | Optional - any name works |
+
+**If using a different AI assistant or workflow tool:**
+- Rename `CLAUDE.md` → `CONTEXT.md` (or any preferred name)
+- The `.claude/` directory can be renamed, but you'll need to update paths in hooks and scripts
+- All slash commands and workflows will still function with minor path adjustments
+
+---
+
 ## Quick Start
 
 ### Step 1: Copy Template
@@ -65,7 +82,7 @@ If you prefer to configure placeholders manually instead of using `/init-project
 | `{{DATE}}` | Today's date | "2026-01-24" |
 
 Files containing placeholders:
-- `CONTEXT.md`
+- `CLAUDE.md`
 - `STATE.md`
 - `DEVLOG.md`
 - `PROJECT.md`
@@ -96,7 +113,7 @@ After running `/init-project`, the wizard handles most configuration automatical
 
 - [x] Placeholder replacement (project name, slug, date)
 - [x] Tech stack permissions in settings.json
-- [x] Tech stack details in CONTEXT.md
+- [x] Tech stack details in CLAUDE.md
 - [ ] Updated `.gitignore` for your project type (if needed)
 - [ ] (Optional) Enabled codebase indexer hook (requires Python)
 - [ ] (Optional) Configured invariants (requires Python)
@@ -405,7 +422,7 @@ your-project/
 │   ├── quick/              # Ad-hoc tasks
 │   ├── todos/              # Captured ideas
 │   └── research/           # Research artifacts
-├── CONTEXT.md               # Project context
+├── CLAUDE.md                # Project context
 ├── PROJECT.md              # Project vision
 ├── REQUIREMENTS.md         # Requirements tracking
 ├── ROADMAP.md              # Phase roadmap

@@ -303,10 +303,10 @@ How to prevent this in the future:
 Improvements to make:
 - Add test coverage for [scenario]
 - Add validation for [input]
-- Document [gotcha] in CONTEXT.md
+- Document [gotcha] in CLAUDE.md
 - Improve error messages
 
-Add to CONTEXT.md:
+Add to CLAUDE.md:
 > Lesson: [Brief description]
 > Prevention: [How to avoid this]
 ```
@@ -536,14 +536,14 @@ Fix applied: [What was changed]
 Prevention: [How to avoid in future]
 
 Ready to commit? Use /commit-push-pr
-Should we add this to CONTEXT.md lessons learned? [Yes/No]
+Should we add this to CLAUDE.md lessons learned? [Yes/No]
 ```
 
 Ask:
 
 "Would you like me to:
 1. Add test coverage to prevent regression?
-2. Document this gotcha in CONTEXT.md?
+2. Document this gotcha in CLAUDE.md?
 3. Look for similar issues elsewhere?
 4. Help improve error handling?"
 

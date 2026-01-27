@@ -39,7 +39,7 @@ You are creating task plans for Phase $arguments.phase.
 1. Read ROADMAP.md for phase details
 2. Read `.planning/{N}-CONTEXT.md` for implementation decisions
 3. Read REQUIREMENTS.md for what must be delivered
-4. Read CONTEXT.md for project patterns and conventions
+4. Read CLAUDE.md for project patterns and conventions
 
 ### Step 2: Research (Optional)
 
@@ -112,7 +112,7 @@ For each task, create a plan file `.planning/{N}-{M}-PLAN.md`:
 
 Check that your plans:
 - [ ] Cover all requirements for this phase
-- [ ] Respect all decisions from CONTEXT.md
+- [ ] Respect all decisions from CLAUDE.md
 - [ ] Have clear verification steps
 - [ ] Don't overlap (each file changed by only one task if possible)
 
@@ -243,6 +243,6 @@ Using UUID instead of auto-increment for better distributed system support.
 ## Important Notes
 
 - If `/discuss-phase` wasn't run, suggest running it first
-- Plans should reference decisions from CONTEXT.md
+- Plans should reference decisions from CLAUDE.md
 - Keep plans independent when possible (parallel execution)
 - If a phase genuinely needs >3 tasks, split it into sub-phases
