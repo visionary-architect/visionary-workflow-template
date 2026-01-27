@@ -63,7 +63,7 @@ Once I describe the task:
 
 **Example:**
 > User: "Add a loading spinner to the submit button"
-> Claude: "I'll add a loading spinner that shows when the submit button is clicked and hides when the action completes. Correct?"
+> Assistant: "I'll add a loading spinner that shows when the submit button is clicked and hides when the action completes. Correct?"
 > User: "Yes"
 
 ### Step 2: Execute Immediately

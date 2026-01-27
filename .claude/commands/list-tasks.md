@@ -89,7 +89,7 @@ Based on queue state, suggest actions:
 ```
 User: /list-tasks
 
-Claude:
+Assistant:
 WORK QUEUE STATUS
 ================================================================
 Available: 2  |  Claimed: 1  |  Completed: 8 (all-time)

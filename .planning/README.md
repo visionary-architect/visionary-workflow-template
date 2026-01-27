@@ -70,7 +70,7 @@ The `intel/` directory is auto-populated by the codebase indexer hook. It contai
 
 - **index.json** - Machine-readable index of all file exports and imports
 - **conventions.json** - Detected naming conventions (function, class, file naming)
-- **summary.md** - Human-readable summary for Claude context injection
+- **summary.md** - Human-readable summary for the AI context injection
 
 This runs automatically on every Write/Edit operation.
 

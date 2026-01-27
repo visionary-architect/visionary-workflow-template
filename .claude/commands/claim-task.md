@@ -79,7 +79,7 @@ If failed, explain why:
 ```
 User: /claim-task
 
-Claude: Here are the available tasks:
+Assistant: Here are the available tasks:
 
   [1] [HIGH] task-abc123: Wire up Admin dashboard...
   [2] [NORM] task-def456: Add CLI command...
@@ -89,7 +89,7 @@ Which task would you like to claim? Enter the number or task ID.
 
 User: 1
 
-Claude: Task claimed successfully!
+Assistant: Task claimed successfully!
 
 TASK DETAILS:
 ================================================================

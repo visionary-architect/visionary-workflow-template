@@ -65,7 +65,7 @@ Would you like to:
 
 ## Auto-Prompting for Completion
 
-When working on a claimed task, you (Claude) should proactively ask about completion when you notice:
+When working on a claimed task, you (the AI) should proactively ask about completion when you notice:
 
 1. **Commit made** - After committing code related to the task
 2. **User says "done"** - Keywords like "done", "finished", "complete", "that's it"
@@ -93,7 +93,7 @@ print(message)
 ```
 User: /complete-task
 
-Claude: You're currently working on:
+Assistant: You're currently working on:
   task-a1b2c3d4: "Wire up Admin dashboard to backend API"
 
 Mark this task as complete?
@@ -102,7 +102,7 @@ Mark this task as complete?
 
 User: Yes, mark complete
 
-Claude: Task completed: task-a1b2c3d4
+Assistant: Task completed: task-a1b2c3d4
 
 Current queue: 2 available, 0 claimed
 

@@ -168,12 +168,12 @@ Requirements:
 **New Milestone Discussion:**
 
 ```
-Claude: What's the focus of v2.0?
+Assistant: What's the focus of v2.0?
 
 User: Adding team collaboration features - multiple users,
       shared projects, permissions.
 
-Claude: What specific features do you want?
+Assistant: What specific features do you want?
 
 User:
 - Team creation and management
@@ -181,16 +181,16 @@ User:
 - Role-based permissions (admin, member, viewer)
 - Shared project workspaces
 
-Claude: Any deferred items from v1.0 to include?
+Assistant: Any deferred items from v1.0 to include?
 
 User: Yeah, we never did the export feature. Add that too.
 
-Claude: Any technical debt?
+Assistant: Any technical debt?
 
 User: The authentication system needs refactoring - it's
       getting messy.
 
-[Claude creates phases and updates files]
+[The AI creates phases and updates files]
 ```
 
 ---

@@ -4,7 +4,7 @@ description: Launch an additional worker session for parallel task execution
 
 # Launch Tandem Worker
 
-Start an additional Claude session to work on tasks in parallel with the current session.
+Start an additional AI session to work on tasks in parallel with the current session.
 
 ## What This Does
 

@@ -41,7 +41,7 @@ You are helping me initialize a new project. Guide me through:
 
 1. **Generate today's date** in YYYY-MM-DD format
 2. **Replace ALL placeholders** in these files:
-   - `CLAUDE.md`
+   - `CONTEXT.md`
    - `STATE.md`
    - `DEVLOG.md`
    - `PROJECT.md`
@@ -125,7 +125,7 @@ Ask about the technical foundation:
    | Go | `Bash(go *)` |
    | Docker | `Bash(docker *)`, `Bash(docker-compose *)` |
 
-2. **Update `CLAUDE.md`** - Fill in the Tech Stack section with their choices
+2. **Update `CONTEXT.md`** - Fill in the Tech Stack section with their choices
 
 **Confirm:**
 ```
@@ -136,7 +136,7 @@ Package Manager: [package manager]
 Commands: run=[cmd], test=[cmd], lint=[cmd]
 
 Updated settings.json with permissions for your stack.
-Updated CLAUDE.md with tech stack details.
+Updated CONTEXT.md with tech stack details.
 ```
 
 ### Step 4: Phase Breakdown
@@ -157,7 +157,7 @@ Once I've approved the plan, generate/update:
 2. **REQUIREMENTS.md** - List all requirements with phase mappings
 3. **ROADMAP.md** - Create the phase structure
 4. **STATE.md** - Initialize with "Project initialized" entry
-5. **CLAUDE.md** - Update the `[PROJECT NAME]` and tech stack sections if this is a fresh project
+5. **CONTEXT.md** - Update the `[PROJECT NAME]` and tech stack sections if this is a fresh project
 
 ### Step 6: Confirm and Offer Next Step
 
@@ -171,7 +171,7 @@ Files created/updated:
 - REQUIREMENTS.md - What you're building
 - ROADMAP.md - [N] phases planned
 - STATE.md - Session tracking started
-- CLAUDE.md - Tech stack configured
+- CONTEXT.md - Tech stack configured
 - settings.json - Permissions configured
 
 Your project is ready! Phase 1 is: [Phase 1 name]
@@ -201,15 +201,15 @@ Your project is ready! Phase 1 is: [Phase 1 name]
 
 ## Example Interaction
 
-**Claude:** What are you building? Describe your project in 2-3 sentences.
+**Assistant:** What are you building? Describe your project in 2-3 sentences.
 
 **User:** A CLI tool for managing my dotfiles across multiple machines.
 
-**Claude:** Great! Why are you building it? What problem does it solve?
+**Assistant:** Great! Why are you building it? What problem does it solve?
 
 **User:** I waste time setting up new machines and keeping configs in sync.
 
-**Claude:** What are your top 3 goals for this project?
+**Assistant:** What are your top 3 goals for this project?
 
 **User:** 1) Easy setup on new machines, 2) Sync changes across machines, 3) Version history for configs
 

@@ -1,7 +1,7 @@
 # Project State
 
-> This file tracks decisions, blockers, and progress across Claude sessions.
-> Claude reads this at the start of each session.
+> This file tracks decisions, blockers, and progress across AI sessions.
+> The AI reads this at the start of each session.
 
 ---
 

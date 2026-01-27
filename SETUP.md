@@ -5,7 +5,7 @@ This guide walks you through setting up visionary_template_1 for your project.
 ## Requirements
 
 **Required:**
-- Claude Code (CLI or VSCode extension)
+- the workflow system (CLI or VSCode extension)
 - Git
 
 **Optional (for advanced features):**
@@ -65,7 +65,7 @@ If you prefer to configure placeholders manually instead of using `/init-project
 | `{{DATE}}` | Today's date | "2026-01-24" |
 
 Files containing placeholders:
-- `CLAUDE.md`
+- `CONTEXT.md`
 - `STATE.md`
 - `DEVLOG.md`
 - `PROJECT.md`
@@ -96,11 +96,11 @@ After running `/init-project`, the wizard handles most configuration automatical
 
 - [x] Placeholder replacement (project name, slug, date)
 - [x] Tech stack permissions in settings.json
-- [x] Tech stack details in CLAUDE.md
+- [x] Tech stack details in CONTEXT.md
 - [ ] Updated `.gitignore` for your project type (if needed)
 - [ ] (Optional) Enabled codebase indexer hook (requires Python)
 - [ ] (Optional) Configured invariants (requires Python)
-- [ ] (Optional) Created component-specific CLAUDE.md files
+- [ ] (Optional) Created component-specific CONTEXT.md files
 
 ---
 
@@ -271,21 +271,21 @@ Enable any of these by adding them to your hooks configuration.
 
 ## Component Documentation
 
-For larger projects, create CLAUDE.md files in component directories:
+For larger projects, create CONTEXT.md files in component directories:
 
 ```
 src/
 ├── api/
-│   └── CLAUDE.md    # API-specific patterns, endpoints, auth handling
+│   └── CONTEXT.md    # API-specific patterns, endpoints, auth handling
 ├── core/
-│   └── CLAUDE.md    # Business logic patterns, domain rules
+│   └── CONTEXT.md    # Business logic patterns, domain rules
 ├── db/
-│   └── CLAUDE.md    # Database patterns, migrations, repositories
+│   └── CONTEXT.md    # Database patterns, migrations, repositories
 └── ui/
-    └── CLAUDE.md    # UI patterns, components, state management
+    └── CONTEXT.md    # UI patterns, components, state management
 ```
 
-Each component CLAUDE.md should include:
+Each component CONTEXT.md should include:
 - Component purpose
 - Key patterns and conventions
 - Common gotchas
@@ -339,7 +339,7 @@ Each component CLAUDE.md should include:
 
 ### Multi-Session Workers (Advanced)
 
-For parallel task execution across multiple Claude sessions:
+For parallel task execution across multiple AI sessions:
 
 ```
 [Create a work queue...]
@@ -405,7 +405,7 @@ your-project/
 │   ├── quick/              # Ad-hoc tasks
 │   ├── todos/              # Captured ideas
 │   └── research/           # Research artifacts
-├── CLAUDE.md               # Project context
+├── CONTEXT.md               # Project context
 ├── PROJECT.md              # Project vision
 ├── REQUIREMENTS.md         # Requirements tracking
 ├── ROADMAP.md              # Phase roadmap
@@ -448,4 +448,4 @@ The indexer supports many languages. If you get errors, check that your file ext
 
 ---
 
-*visionary_template_1 v1.1*
+*Created by visionary-architect*

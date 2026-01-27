@@ -111,7 +111,7 @@ task = add_task(
 ```
 User: /add-task update ui
 
-Claude: I'd like to capture this task in more detail so a worker can pick it up effectively.
+Assistant: I'd like to capture this task in more detail so a worker can pick it up effectively.
 
 Which UI would you like to update?
 - Main application window
@@ -121,7 +121,7 @@ Which UI would you like to update?
 
 User: the dashboard
 
-Claude: Got it - the dashboard. What kind of updates are you looking for?
+Assistant: Got it - the dashboard. What kind of updates are you looking for?
 - Visual/styling changes (colors, fonts, spacing)
 - New features (add sections, functionality)
 - Bug fixes
@@ -129,19 +129,19 @@ Claude: Got it - the dashboard. What kind of updates are you looking for?
 
 User: i want to add a section that shows the current task status
 
-Claude: **Task to add:**
+Assistant: **Task to add:**
 "Add a task status section to the dashboard (`src/ui/dashboard.py`) that displays current progress, including completion count, estimated time remaining, and any errors."
 
 Is this correct? Any additional context to add?
 
 User: yes that's good
 
-Claude: What priority should this task have?
+Assistant: What priority should this task have?
 [Uses AskUserQuestion with High/Normal/Low options]
 
 User: normal
 
-Claude: Added task to work queue:
+Assistant: Added task to work queue:
   ID: task-7f8a9b2c
   Description: Add a task status section to the dashboard...
   Priority: Normal (2)
@@ -154,7 +154,7 @@ Use /tandem to launch a worker that can pick up this task.
 ```
 User: /add-task Implement retry logic for failed API calls in api/client.py with exponential backoff (max 3 retries, starting at 1s delay)
 
-Claude: That's already well-specified! Let me confirm:
+Assistant: That's already well-specified! Let me confirm:
 
 **Task to add:**
 "Implement retry logic for failed API calls in `api/client.py` with exponential backoff (max 3 retries, starting at 1s delay)"
@@ -163,11 +163,11 @@ Is this correct? Any additional context?
 
 User: add context that it should handle both connection errors and 5xx responses
 
-Claude: What priority?
+Assistant: What priority?
 
 User: high
 
-Claude: Added task to work queue:
+Assistant: Added task to work queue:
   ID: task-3c4d5e6f
   Description: Implement retry logic for failed API calls in api/client.py...
   Priority: High (1)

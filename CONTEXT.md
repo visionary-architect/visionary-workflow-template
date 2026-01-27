@@ -253,7 +253,7 @@ When multiple sessions work on the same task list:
 
 ## Lessons Learned
 
-> Claude automatically adds entries when mistakes are corrected or patterns are discovered.
+> The AI automatically adds entries when mistakes are corrected or patterns are discovered.
 
 ### {{DATE}}
 - Project initialized from visionary_template_1
@@ -262,18 +262,18 @@ When multiple sessions work on the same task list:
 
 ## Context Management
 
-> Claude's quality can degrade as conversations get long. Use these practices to maintain peak performance.
+> The AI's quality can degrade as conversations get long. Use these practices to maintain peak performance.
 
 ### Session Start Checklist
-At the start of each session, Claude should read:
-1. This file (CLAUDE.md)
+At the start of each session, The AI should read:
+1. This file (CONTEXT.md)
 2. STATE.md - Current focus, recent decisions, handoff notes
 3. DEVLOG.md - Recent sessions, active bugs, progress history
 4. `.planning/intel/summary.md` - Codebase patterns (if exists)
 
 ### When to Start a Fresh Session
 - After completing a major feature or phase
-- When Claude starts giving inconsistent responses
+- When the AI starts giving inconsistent responses
 - After 30+ back-and-forth messages
 - When switching to a completely different area of the codebase
 
@@ -284,27 +284,27 @@ At the start of each session, Claude should read:
 - **Use Plan Mode:** For complex features (Shift+Tab twice)
 
 ### Signs of Context Degradation
-- Claude forgets earlier decisions
+- The AI forgets earlier decisions
 - Responses become generic
 - Code suggestions contradict established patterns
-- Claude asks about things already discussed
+- The AI asks about things already discussed
 
 ### Recovery Steps
 1. Update STATE.md and DEVLOG.md with current status (`/pause-work`)
-2. Start a new Claude session
-3. Claude reads fresh context from CLAUDE.md, STATE.md, DEVLOG.md, and intel
+2. Start a new AI session
+3. The AI reads fresh context from CONTEXT.md, STATE.md, DEVLOG.md, and intel
 
 ---
 
 ## Autonomous Learning
 
-> Claude should proactively maintain project knowledge without being asked.
+> The AI should proactively maintain project knowledge without being asked.
 
-### When to Update CLAUDE.md (Lessons Learned)
+### When to Update CONTEXT.md (Lessons Learned)
 
-Claude MUST add a new entry to "Lessons Learned" when:
+The AI MUST add a new entry to "Lessons Learned" when:
 1. **User corrects a mistake** - Record what was wrong and the correct approach
-2. **A bug is found in Claude's code** - Document the pattern that caused it
+2. **A bug is found in The AI's code** - Document the pattern that caused it
 3. **User expresses preference** - "I prefer X over Y" → record it
 4. **A better pattern is discovered** - During refactoring or review
 5. **An assumption proves wrong** - Document the correct understanding
@@ -317,7 +317,7 @@ Claude MUST add a new entry to "Lessons Learned" when:
 
 ### When to Update STATE.md
 
-Claude MUST update STATE.md:
+The AI MUST update STATE.md:
 1. **After completing any task** - Update "Session Log" with what was done
 2. **When making a decision** - Add to "Recent Decisions" table
 3. **When hitting a blocker** - Add to "Open Questions / Blockers"
@@ -326,7 +326,7 @@ Claude MUST update STATE.md:
 
 ### Self-Diagnosis: Context Degradation
 
-Claude should **proactively suggest a fresh session** when noticing:
+The AI should **proactively suggest a fresh session** when noticing:
 - Repeating suggestions that were already rejected
 - Forgetting decisions made earlier in the conversation
 - Giving generic responses instead of project-specific ones
@@ -337,7 +337,7 @@ Claude should **proactively suggest a fresh session** when noticing:
 
 ---
 
-## Notes for Claude
+## Notes for the AI
 
 > Special instructions for the AI assistant working on this project
 

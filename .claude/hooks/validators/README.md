@@ -336,7 +336,7 @@ def validate(target_path: str) -> dict:
 
 5. **Hook it up:** Add to command/agent YAML frontmatter
 
-6. **Use it:** Let Claude run your command/agent and see validation in action
+6. **Use it:** Let the AI run your command/agent and see validation in action
 
 ---
 

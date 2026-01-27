@@ -39,7 +39,7 @@ You are creating task plans for Phase $arguments.phase.
 1. Read ROADMAP.md for phase details
 2. Read `.planning/{N}-CONTEXT.md` for implementation decisions
 3. Read REQUIREMENTS.md for what must be delivered
-4. Read CLAUDE.md for project patterns and conventions
+4. Read CONTEXT.md for project patterns and conventions
 
 ### Step 2: Research (Optional)
 
@@ -60,7 +60,7 @@ Research areas might include:
 Break the phase into **2-3 atomic tasks** (never more than 3).
 
 **Why 2-3 tasks?**
-- Claude's quality peaks at 0-30% context usage
+- The AI's quality peaks at 0-30% context usage
 - Quality degrades significantly beyond 50%
 - Smaller tasks = fresher context = better code
 

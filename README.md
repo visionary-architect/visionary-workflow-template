@@ -23,7 +23,7 @@ This approach ensures work is trackable, resumable, and maintains quality throug
 - **3 Specialized Agents** - Code review, debugging, and QA assistance
 - **Persistent Task Tracking** - Tasks survive across sessions
 - **Multi-Session Coordination** - Handoff notes prevent context loss
-- **Autonomous Learning** - Claude updates documentation as it learns
+- **Autonomous Learning** - The AI updates documentation as it learns
 - **Tech-Stack Agnostic** - Works with any language or framework
 - **Optional Automation** - Codebase indexer and validators available (requires Python)
 
@@ -48,7 +48,7 @@ See [SETUP.md](SETUP.md) for detailed instructions and customization options.
 | `.claude/agents/` | Specialized AI agents |
 | `.claude/hooks/` | Validators and codebase indexer |
 | `.planning/` | Planning artifacts (auto-populated) |
-| `CLAUDE.md` | Project context for Claude |
+| `CONTEXT.md` | Project context for the AI |
 | `STATE.md` | Current session state |
 | `DEVLOG.md` | Development history |
 
@@ -109,22 +109,22 @@ INVARIANTS = [
 
 ### Adding Component Documentation
 
-For larger projects, create component-specific CLAUDE.md files:
+For larger projects, create component-specific CONTEXT.md files:
 
 ```
 src/
 ├── api/
-│   └── CLAUDE.md    # API patterns
+│   └── CONTEXT.md    # API patterns
 ├── core/
-│   └── CLAUDE.md    # Core logic patterns
+│   └── CONTEXT.md    # Core logic patterns
 └── ui/
-    └── CLAUDE.md    # UI patterns
+    └── CONTEXT.md    # UI patterns
 ```
 
 ## Requirements
 
 **Required:**
-- Claude Code (CLI or VSCode extension)
+- the workflow system (CLI or VSCode extension)
 - Git
 
 **Optional (for advanced features):**
@@ -136,4 +136,4 @@ MIT - Use freely in your projects.
 
 ---
 
-*Created with visionary_template_1 v1.1*
+*Created by visionary-architect*

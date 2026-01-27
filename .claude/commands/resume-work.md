@@ -10,10 +10,10 @@ description: "Restore context from a previous session and continue"
 
 ## Purpose
 
-After a break (or in a new Claude session), this command:
+After a break (or in a new AI session), this command:
 1. Reads your handoff notes (STATE.md) for immediate context
 2. Reviews recent development history (DEVLOG.md) for bugs, fixes, and progress
-3. Loads project patterns from CLAUDE.md
+3. Loads project patterns from CONTEXT.md
 4. Gets you back up to speed quickly
 
 ---
@@ -36,7 +36,7 @@ ${{ type STATE.md 2>nul || cat STATE.md 2>/dev/null || echo "STATE.md not found"
 ${{ type DEVLOG.md 2>nul | head -100 || head -100 DEVLOG.md 2>/dev/null || echo "DEVLOG.md not found" }}
 
 **Project Rules:**
-${{ type CLAUDE.md 2>nul | head -50 || head -50 CLAUDE.md 2>/dev/null || echo "CLAUDE.md not found" }}
+${{ type CONTEXT.md 2>nul | head -50 || head -50 CONTEXT.md 2>/dev/null || echo "CONTEXT.md not found" }}
 
 **Codebase Intel:**
 ${{ type .planning\intel\summary.md 2>nul || cat .planning/intel/summary.md 2>/dev/null || echo "No codebase intel" }}
@@ -95,7 +95,7 @@ If `.claude/session/test_state.json` exists:
 - Patterns/lessons from recent sessions
 - Recent commits and progress
 
-**From CLAUDE.md:**
+**From CONTEXT.md:**
 - Project rules and patterns
 - Lessons learned from previous sessions
 - Key conventions to follow

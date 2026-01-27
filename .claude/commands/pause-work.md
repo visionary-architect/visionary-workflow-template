@@ -64,7 +64,7 @@ Ask me (or determine from context):
 6. **Patterns or lessons learned?**
    - Gotchas discovered
    - Things to remember
-   - Should anything go in CLAUDE.md?
+   - Should anything go in CONTEXT.md?
 
 ### Step 2: Check for Uncommitted Work
 
@@ -101,7 +101,7 @@ Add a new session entry at the top of "Recent Sessions":
 - [Decision and rationale]
 
 #### Patterns Learned
-- [Pattern or lesson for CLAUDE.md]
+- [Pattern or lesson for CONTEXT.md]
 
 #### Commits
 - `hash` message
@@ -173,16 +173,16 @@ Also add to session log:
 - See DEVLOG.md for full session details
 ```
 
-### Step 5: Update CLAUDE.md (If Needed)
+### Step 5: Update CONTEXT.md (If Needed)
 
-If significant patterns or lessons were learned this session, update the appropriate CLAUDE.md file.
+If significant patterns or lessons were learned this session, update the appropriate CONTEXT.md file.
 
 **Where to add lessons:**
 
 | Scope | Update |
 |-------|--------|
-| Project-wide patterns, workflow, architecture | Root `CLAUDE.md` |
-| Component-specific patterns | Component's `CLAUDE.md` (if exists) |
+| Project-wide patterns, workflow, architecture | Root `CONTEXT.md` |
+| Component-specific patterns | Component's `CONTEXT.md` (if exists) |
 
 **Format for lessons:**
 ```markdown
@@ -191,8 +191,8 @@ If significant patterns or lessons were learned this session, update the appropr
 ```
 
 **Guidelines:**
-- Add project-wide lessons to root CLAUDE.md
-- Add component-specific lessons to that component's CLAUDE.md (if you have them)
+- Add project-wide lessons to root CONTEXT.md
+- Add component-specific lessons to that component's CONTEXT.md (if you have them)
 - Don't duplicate - if it's component-specific, only add there
 
 ### Step 6: Refresh Context Cache
@@ -283,4 +283,4 @@ Still capture at minimum:
 - DEVLOG.md = permanent history (bugs, fixes, progress)
 - Note uncommitted work to avoid losing changes
 - Be specific about bugs - future you will thank you
-- Add significant lessons to CLAUDE.md
+- Add significant lessons to CONTEXT.md

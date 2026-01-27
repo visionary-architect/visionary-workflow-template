@@ -42,7 +42,7 @@ You are executing plans for Phase $arguments.phase.
 Before starting:
 - [ ] Verify git working directory is clean (or stash changes)
 - [ ] Confirm all prerequisites from plans are met
-- [ ] Read project conventions from CLAUDE.md
+- [ ] Read project conventions from CONTEXT.md
 - [ ] Read codebase patterns from `.planning/intel/summary.md` (if exists)
 
 ### Step 3: Create Task List
@@ -318,7 +318,7 @@ Issues: [None or list]
 ## Context Management
 
 **Why this matters:**
-Claude's quality degrades as context fills. By executing plans in a focused way:
+The AI's quality degrades as context fills. By executing plans in a focused way:
 - Each task starts relatively fresh
 - Plans provide precise instructions (less back-and-forth)
 - Verification catches issues early

@@ -27,7 +27,7 @@ Your project should define invariants that are **non-negotiable rules** every co
 | 2 | [Your second invariant] | [What it means] |
 | 3 | [Your third invariant] | [What it means] |
 
-Update these in `CLAUDE.md` and configure validation in `invariant_validator.py`.
+Update these in `CONTEXT.md` and configure validation in `invariant_validator.py`.
 
 ---
 
@@ -129,6 +129,6 @@ To run invariant checks automatically on every file edit, add to `.claude/settin
 
 ## Related
 
-- See `CLAUDE.md` for your project's invariant documentation
+- See `CONTEXT.md` for your project's invariant documentation
 - See `.claude/hooks/validators/README.md` for validator guide
 - See `.claude/hooks/validators/TEMPLATE_validator.py` for creating custom validators

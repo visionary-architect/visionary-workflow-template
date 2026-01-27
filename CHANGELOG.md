@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to visionary_template_1 will be documented in this file.
+All notable changes to visionary-workflow-template will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 #### Multi-Session Worker System
-Run parallel Claude sessions that coordinate on shared work queues.
+Run parallel AI sessions that coordinate on shared work queues.
 
 **6 New Commands:**
 | Command | Purpose |
@@ -53,7 +53,7 @@ These are disabled by default. Enable in `settings.json` if you want session ana
 - **Command count:** 19 → 25
 - **SETUP.md:** Added Multi-Session Workers workflow section and updated directory structure
 - **README.md:** Added Task Queue Commands table
-- **CLAUDE.md:** Added Task Queue Commands reference section
+- **CONTEXT.md:** Added Task Queue Commands reference section
 
 ### Summary
 
@@ -77,7 +77,7 @@ If upgrading from v1.0:
 4. Copy new intel hooks if desired
 5. Update `settings.json` with new hook configurations
 
-Or start fresh with v1.1 and migrate your `CLAUDE.md` customizations.
+Or start fresh with v1.1 and migrate your `CONTEXT.md` customizations.
 
 ---
 
@@ -85,7 +85,7 @@ Or start fresh with v1.1 and migrate your `CLAUDE.md` customizations.
 
 ### Added
 
-- Initial release of visionary_template_1
+- Initial release of visionary-workflow-template
 - **19 Slash Commands** for structured development workflow
 - **3 Specialized Agents:** code-simplifier, debug-helper, verify-app
 - **3 Skills:** conventional-commits, test-detection, frontend-design

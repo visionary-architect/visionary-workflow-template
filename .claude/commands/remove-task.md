@@ -55,7 +55,7 @@ Current queue: 2 available, 1 claimed
 ```
 User: /remove-task
 
-Claude: Here are the current tasks in the queue:
+Assistant: Here are the current tasks in the queue:
 
 [ ] [NORM] task-a1b2c3d4: Wire up Admin dashboard to backend API
 [ ] [NORM] task-e5f6g7h8: Add new dashboard CLI command
@@ -65,13 +65,13 @@ Which task would you like to remove? Enter the task ID.
 
 User: task-e5f6g7h8
 
-Claude: Remove task `task-e5f6g7h8`: "Add new dashboard CLI command"?
+Assistant: Remove task `task-e5f6g7h8`: "Add new dashboard CLI command"?
 
 [Uses AskUserQuestion: Yes / No]
 
 User: Yes
 
-Claude: Task removed: task-e5f6g7h8
+Assistant: Task removed: task-e5f6g7h8
 
 Current queue: 1 available, 1 claimed
 ```
