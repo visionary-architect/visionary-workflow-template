@@ -1,0 +1,177 @@
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_TASKS": "true",
+    "CLAUDE_CODE_TASK_LIST_ID": "{{PROJECT_SLUG}}",
+    "CLAUDE_SESSION_TAG": "main"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session/warmup_cache.py",
+            "async": true,
+            "timeout": 10000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session/session_coordinator.py",
+            "async": true,
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/validators/dangerous_command_checker.py",
+            "async": false,
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session/file_conflict_checker.py",
+            "async": false,
+            "timeout": 3000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/intel/codebase_indexer.py",
+            "async": true,
+            "timeout": 30000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/validators/invariant_validator.py $CLAUDE_FILE_PATH",
+            "async": false,
+            "timeout": 10000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/validators/json_validator.py $CLAUDE_FILE_PATH",
+            "async": true,
+            "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/validators/markdown_validator.py $CLAUDE_FILE_PATH",
+            "async": true,
+            "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/intel/file_change_tracker.py",
+            "async": true,
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/intel/test_result_tracker.py",
+            "async": true,
+            "timeout": 60000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/intel/event_logger.py",
+            "async": true,
+            "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/validators/commit_validator.py",
+            "async": true,
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "TodoWrite",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session/task_claim_validator.py",
+            "async": true,
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session/task_completion_reminder.py",
+            "timeout": 3000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session/auto_snapshot.py",
+            "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session/auto_devlog.py",
+            "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session/session_cleanup.py",
+            "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session/session_maintenance.py",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(git tag*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git push*)",
+      "Bash(npm run test*)",
+      "Bash(npm run build*)",
+      "Bash(npm run lint*)",
+      "Bash(pytest*)",
+      "Bash(python -m*)",
+      "Bash(ls*)",
+      "Bash(dir*)",
+      "Bash(cat*)",
+      "Bash(type*)",
+      "Bash(find*)",
+      "Bash(python .claude/hooks/*)",
+      "Bash(python3 .claude/hooks/*)",
+      "Bash(uv run .claude/hooks/*)"
+    ]
+  }
+}
