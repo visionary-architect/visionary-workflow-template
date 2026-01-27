@@ -310,8 +310,8 @@ def validate(target_path: str) -> dict:
 
 - **Template:** `TEMPLATE_validator.py` - Copy this to create new validators
 - **Examples:** `json_validator.py`, `markdown_validator.py`, `commit_validator.py`
-- **Full Guide:** `../../docs/self-validating-agents-guide.md`
-- **Levels Guide:** `../../docs/validation-levels-guide.md`
+- **Full Guide:** See SETUP.md for workflow documentation
+- **Levels Guide:** See validation level comments in each validator
 
 ---
 

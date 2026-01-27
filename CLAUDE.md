@@ -1,6 +1,6 @@
 # Project: {{PROJECT_NAME}}
 
-> **Template Version:** visionary_template_1 v1.0
+> **Template Version:** visionary_template_1 v1.1
 > **Last Updated:** {{DATE}}
 > **Status:** Not Initialized
 
@@ -349,5 +349,5 @@ The AI should **proactively suggest a fresh session** when noticing:
 
 ---
 
-*Template: visionary_template_1 v1.0*
+*Template: visionary_template_1 v1.1*
 *Documentation: See SETUP.md for initialization instructions*
