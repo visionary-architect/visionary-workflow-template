@@ -1,181 +1,179 @@
-# visionary_template_1
+# Visionary Workflow Template
 
-A comprehensive workflow template for AI-augmented software development with full lifecycle automation.
+A production-ready workflow template for Claude Code that turns AI-augmented development into a structured, repeatable process — with automated validation, multi-session coordination, and full lifecycle hooks.
 
-## What This Is
+## Quick Start
 
-This is the Visionary workflow template — a structured approach to AI-augmented software development that includes phase-based planning, automated validation, persistent task tracking, session continuity, TTS notifications, and 33 automated behaviors across all 12 Claude Code lifecycle events.
+```
+1. Copy this template into your project directory
+2. Open Claude Code
+3. Run /init-project
+```
 
-## How It Works
+The wizard walks you through naming your project, defining your vision, and setting up your first milestone. Everything else is automatic.
 
-The template organizes development into phases, each with:
-
-1. **Discussion** - Capture requirements, constraints, and key decisions
-2. **Planning** - Create atomic, verifiable task plans (with optional team-based meta-prompting)
-3. **Execution** - Implement with automatic progress tracking and per-edit validation
-4. **Verification** - Validate against requirements
-
-This approach ensures work is trackable, resumable, and maintains quality throughout.
-
-## Key Features
-
-- **31 Slash Commands** - Streamlined workflows for common development tasks
-- **9 Specialized Agents** - Builder, validator, research, meta-agent, code review, debugging, QA, greeting, and work-completion
-- **41 Hook Scripts** - Automated behaviors across all 12 lifecycle events
-- **8 Status Lines** - From basic to powerline-style with context bars
-- **8 Output Styles** - GenUI, ultra-concise, TTS-summary, table-based, YAML, bullet-points, HTML, markdown
-- **3 Skills** - Reusable skill definitions
-- **Persistent Task Tracking** - Tasks survive across sessions
-- **Multi-Session Coordination** - Handoff notes prevent context loss
-- **TTS Notifications** - Spoken announcements for completions, subagent work, and notifications
-- **Meta-Prompting** - Self-validating plans with Stop hooks that force completeness
-- **Autonomous Learning** - The AI updates documentation as it learns
-- **Tech-Stack Agnostic** - Works with any language or framework
-
-## Getting Started
-
-1. **Copy this template** to your project directory
-2. **Run `/init-project`** to start the wizard
-
-That's it! The wizard will:
-- Ask for your project name and configure all template files automatically
-- Guide you through defining your vision, requirements, and roadmap
-- Set up everything you need to start Phase 1
-
-See [SETUP.md](SETUP.md) for detailed instructions and customization options.
+See [SETUP.md](SETUP.md) for detailed configuration and customization options.
 
 ### Optional Dependencies
 
-These are not required but enable additional features:
+None of these are required. Each feature degrades gracefully when its dependency is missing.
 
 ```bash
-# TTS spoken notifications (session completions, subagent summaries)
-pip install pyttsx3
-
-# LLM-powered agent naming and completion messages
-pip install anthropic
-# Then set: ANTHROPIC_API_KEY=sk-ant-...
-
-# Code quality validators (auto-run on every Write/Edit)
-pip install ruff mypy
+pip install pyttsx3       # Spoken TTS notifications (completions, subagent summaries)
+pip install anthropic     # LLM-powered agent naming and completion messages
+pip install ruff          # Auto-lint on every Write/Edit
+pip install ty            # Auto-type-check on every Write/Edit
 ```
 
-## Template Contents
+## How It Works
 
-| Path | Purpose | Count |
-|------|---------|-------|
-| `.claude/commands/` | Workflow commands | 31 |
-| `.claude/agents/` | Specialized AI agents | 9 |
-| `.claude/hooks/` | Lifecycle hooks, validators, utilities | 41 |
-| `.claude/status_lines/` | Status bar configurations | 8 |
-| `.claude/output-styles/` | Output format templates | 8 |
-| `.claude/skills/` | Reusable skill definitions | 3 |
-| `.claude/settings.json` | Hook wiring, permissions, statusLine | - |
-| `.planning/` | Planning artifacts (auto-populated) | - |
-| `CLAUDE.md` | Project context for the AI | - |
-| `STATE.md` | Current session state | - |
-| `DEVLOG.md` | Development history | - |
+Development is organized into **phases**, each following a four-step cycle:
 
-## Commands Overview
+```
+/discuss-phase 1  -->  /plan-phase 1  -->  /execute-phase 1  -->  /verify-work 1
+     |                      |                      |                      |
+  Capture             Create atomic         Implement with         Validate against
+  decisions           task plans             auto-validation        requirements
+```
+
+Between phases, use `/pause-work` and `/resume-work` to maintain context across sessions. The template handles checkpointing, handoff notes, and session state automatically.
+
+For parallel work, use `/add-task` to queue work items and `/tandem` to launch additional worker sessions that pull from the shared queue.
+
+## What's Included
+
+| Component | Count | Location |
+|-----------|-------|----------|
+| Slash Commands | 31 | `.claude/commands/` |
+| Specialized Agents | 9 | `.claude/agents/` |
+| Lifecycle Hooks | 41 | `.claude/hooks/` |
+| Status Line Styles | 8 | `.claude/status_lines/` |
+| Output Styles | 8 | `.claude/output-styles/` |
+| Reusable Skills | 3 | `.claude/skills/` |
+| Worker Scripts | 3 | `.claude/scripts/` |
+
+## Commands
 
 ### Core Workflow
-| Command | Purpose |
-|---------|---------|
-| `/init-project` | Initialize project with vision and roadmap |
-| `/discuss-phase N` | Capture decisions for phase N |
-| `/plan-phase N` | Create atomic task plans |
-| `/plan-w-team` | Team-based planning with builder/validator agents and self-validating Stop hooks |
-| `/execute-phase N` | Implement with progress tracking |
-| `/verify-work N` | User acceptance testing |
+
+| Command | What It Does |
+|---------|-------------|
+| `/init-project` | Interactive wizard: name your project, define vision, create roadmap |
+| `/discuss-phase N` | Capture requirements and decisions before planning phase N |
+| `/plan-phase N` | Break phase N into atomic, verifiable task plans |
+| `/execute-phase N` | Implement the plans with automatic progress tracking |
+| `/verify-work N` | Walk through user acceptance testing for phase N |
+
+### Planning and Execution
+
+| Command | What It Does |
+|---------|-------------|
+| `/plan-w-team` | Create a team-orchestrated plan with builder/validator agent assignments |
+| `/build <plan>` | Deploy builder and validator agents to execute a plan file |
+| `/cook` | Launch parallel subagents for independent tasks |
+| `/quick` | Fast execution for small, ad-hoc tasks (skips full planning) |
 
 ### Session Management
-| Command | Purpose |
-|---------|---------|
-| `/pause-work` | Create handoff for session break |
-| `/resume-work` | Restore context from previous session |
-| `/progress` | Show current status |
 
-### Utilities
-| Command | Purpose |
-|---------|---------|
-| `/quick` | Fast execution for small tasks |
-| `/build <plan>` | Deploy builder/validator agents to execute a plan |
-| `/cook` | Launch parallel subagents for concurrent work |
-| `/prime` | Load project context (read-only) |
-| `/question` | Read-only research mode |
-| `/commit-push-pr` | Automated git workflow |
-| `/test` | Smart test runner |
-| `/review` | Comprehensive code review |
-| `/full-review-pipeline` | Complete code review pipeline with quality gates |
-| `/explain` | Non-technical code explanations |
-| `/check-invariants` | Validate code against project-defined invariants |
-| `/update-status-line` | Write custom key-value pairs to status line display |
-| `/analyze-codebase` | Bootstrap codebase intelligence for existing code |
-
-### Milestone Management
-| Command | Purpose |
-|---------|---------|
-| `/complete-milestone` | Archive a completed milestone and tag release |
-| `/new-milestone` | Start a new version/milestone |
-| `/add-todo` | Capture ideas for later without interrupting current work |
+| Command | What It Does |
+|---------|-------------|
+| `/pause-work` | Save current state, create handoff notes for the next session |
+| `/resume-work` | Restore context from a previous session and continue |
+| `/progress` | Show current project status, phase, and next steps |
+| `/prime` | Load project context into conversation (read-only) |
 
 ### Multi-Session Workers
-| Command | Purpose |
-|---------|---------|
-| `/add-task` | Add task to persistent work queue |
-| `/list-tasks` | View work queue status |
-| `/claim-task` | Claim a queued task |
-| `/complete-task` | Mark claimed task done |
-| `/remove-task` | Remove a task from the work queue |
-| `/tandem` | Launch parallel worker session |
+
+| Command | What It Does |
+|---------|-------------|
+| `/add-task` | Add a task to the persistent work queue |
+| `/list-tasks` | View work queue with status of all tasks |
+| `/claim-task` | Claim a queued task for the current session |
+| `/complete-task` | Mark a claimed task as done |
+| `/remove-task` | Remove a task from the queue |
+| `/tandem` | Launch an additional worker session for parallel execution |
+
+### Code Quality
+
+| Command | What It Does |
+|---------|-------------|
+| `/review` | Thorough code review with actionable feedback |
+| `/full-review-pipeline` | Complete review pipeline with quality gates |
+| `/test` | Smart test runner based on changed files |
+| `/check-invariants` | Validate code against project-defined invariants |
+| `/commit-push-pr` | Automated commit, push, and PR creation |
+
+### Utilities
+
+| Command | What It Does |
+|---------|-------------|
+| `/explain` | Plain-language code explanations |
+| `/question` | Research-only mode (no code modifications) |
+| `/analyze-codebase` | Bootstrap codebase intelligence for an existing project |
+| `/update-status-line` | Write custom key-value pairs to the status bar |
+| `/add-todo` | Capture ideas for later without interrupting current work |
+| `/complete-milestone` | Archive a milestone and tag the release |
+| `/new-milestone` | Start a new version/milestone |
 
 ## Agents
 
-| Agent | Model | Purpose |
-|-------|-------|---------|
-| `builder` | opus | Implements code with per-edit ruff/ty validation |
-| `validator` | opus | Reviews code (cannot Write/Edit — read-only) |
-| `meta-agent` | sonnet | Creates new agents on demand |
-| `research` | sonnet | Deep web research with multi-source verification |
-| `code-simplifier` | - | Reviews code and suggests simplifications |
-| `debug-helper` | - | Systematic debugging assistance |
-| `verify-app` | - | QA testing and verification |
-| `greeting` | haiku | Proactive session greeting |
-| `work-completion` | haiku | TTS work summaries |
+| Agent | Model | Role |
+|-------|-------|------|
+| **builder** | opus | Implements code changes with per-edit ruff/ty validation |
+| **validator** | opus | Reviews code in read-only mode (cannot modify files) |
+| **meta-agent** | sonnet | Creates new agent definitions on demand |
+| **research** | sonnet | Deep web research with multi-source verification |
+| **code-simplifier** | - | Reviews code and suggests simplifications |
+| **debug-helper** | - | Systematic debugging assistance |
+| **verify-app** | - | QA testing and verification |
+| **greeting** | haiku | Friendly session greeting |
+| **work-completion** | haiku | Spoken TTS summary of completed work |
 
-## Lifecycle Hooks (12 Events)
+## Lifecycle Hooks
 
-All 12 Claude Code lifecycle events are wired:
+All 12 Claude Code lifecycle events are covered:
 
-| Event | Hook | Sync | What It Does |
-|-------|------|------|-------------|
-| SessionStart | `session_start.py` | sync | Context injection, project detection, env setup |
-| UserPromptSubmit | `user_prompt_submit.py` | sync | Prompt logging, agent naming, empty-prompt blocking |
-| PreToolUse | `dangerous_command_checker.py` | sync | Blocks destructive Bash commands |
-| PermissionRequest | `permission_request.py` | sync | Auto-allows read-only tools and safe Bash patterns |
-| PostToolUse | `ruff_validator.py`, `ty_validator.py` | sync | Per-edit lint and type checking |
-| PostToolUseFailure | `post_tool_use_failure.py` | sync | Error tracking, repeat-failure warnings |
-| Notification | `notification.py` | async | TTS spoken notifications |
-| SubagentStart | `subagent_start.py` | async | Spawn tracking in session JSON |
-| SubagentStop | `subagent_stop.py` | async | TTS summary of subagent work |
-| Stop | `stop_completion.py` + 5 others | async | TTS completion, auto-snapshot, auto-devlog |
-| PreCompact | `pre_compact.py` | async | Transcript backup before compaction |
-| SessionEnd | `session_end.py` | async | Session finalization and audit |
+| Event | What Happens |
+|-------|-------------|
+| **SessionStart** | Injects project context, detects branch and recent commits, sets up session state |
+| **UserPromptSubmit** | Logs prompts, names agents, validates input |
+| **PreToolUse** | Blocks dangerous Bash commands, checks file conflicts between sessions, registers session heartbeat |
+| **PermissionRequest** | Auto-allows read-only tools and safe Bash patterns |
+| **PostToolUse** | Runs ruff + ty on every edit, validates JSON/markdown, tracks file changes, indexes codebase, validates commit messages |
+| **PostToolUseFailure** | Tracks errors, warns on repeated failures |
+| **Notification** | TTS spoken notifications |
+| **SubagentStart** | Tracks spawned agents in session state |
+| **SubagentStop** | TTS summary of what the subagent accomplished |
+| **Stop** | Reminds about uncompleted tasks, creates git snapshot, writes devlog entry, cleans up session locks |
+| **PreCompact** | Backs up transcript before context compaction |
+| **SessionEnd** | Finalizes session audit data |
+
+## Multi-Session Coordination
+
+The template includes a full coordination system for running multiple Claude Code sessions in parallel:
+
+- **Session registry** — Each session registers itself and maintains a heartbeat. Stale sessions (>30 min inactive) are automatically cleaned up.
+- **File locking** — When one session edits a file, other sessions are warned before touching it. Prevents merge conflicts.
+- **Task claiming** — When a session starts working on a task, it claims it. Other sessions see the claim and work on something else.
+- **Work queue** — A persistent shared queue (`/add-task`, `/claim-task`, `/complete-task`) that multiple workers can pull from.
+- **OS-level file locks** — All shared JSON state files use cross-platform file locking (Windows `msvcrt` / Unix `fcntl`) to prevent race conditions during concurrent read-modify-write operations.
 
 ## Status Lines
 
-Switch between status line styles by editing `settings.json`:
+The status bar shows live session info. Switch styles by editing `settings.json`:
 
-| Style | Output |
-|-------|--------|
-| `v1_basic` | `project \| branch \| Model` |
-| `v2_smart_prompts` | `project \| branch \| Model \| 5 prompts` |
-| `v3_agent_sessions` | `project \| branch \| Model \| Agent: Phoenix` |
-| `v5_cost_tracking` | `project \| branch \| $0.12 \| 45s` |
-| **`v6_context_bar`** (default) | `project \| branch \| Model \| [████░░] 42% \| $0.12` |
-| `v7_duration` | `project \| branch \| 12m 34s \| $0.12` |
-| `v8_token_stats` | `project \| In: 15.2k \| Out: 4.5k \| 42% ctx \| $0.12` |
-| `v9_powerline` | Powerline-style with Unicode glyphs and ANSI colors |
+| Style | Example Output |
+|-------|---------------|
+| v1 basic | `project \| branch \| Model` |
+| v2 smart prompts | `project \| branch \| Model \| 5 prompts` |
+| v3 agent sessions | `project \| branch \| Model \| Agent: Phoenix` |
+| v5 cost tracking | `project \| branch \| $0.12 \| 45s` |
+| **v6 context bar** (default) | `project \| branch \| Model \| [####....] 42% \| $0.12` |
+| v7 duration | `project \| branch \| 12m 34s \| $0.12` |
+| v8 token stats | `project \| In: 15.2k \| Out: 4.5k \| 42% ctx \| $0.12` |
+| v9 powerline | Powerline-style with background colors and Unicode glyphs |
+
+To change: edit `.claude/settings.json` > `statusLine.command` to point at a different `v*.py` file.
 
 ## Output Styles
 
@@ -183,34 +181,20 @@ Available in `.claude/output-styles/` for use as custom output formats:
 
 | Style | Best For |
 |-------|----------|
-| `genui.md` | Standalone HTML5 pages |
-| `ultra-concise.md` | Minimal, no-frills responses |
-| `tts-summary.md` | TTS-friendly (no markdown symbols) |
-| `table-based.md` | Data-heavy responses |
-| `yaml-structured.md` | Machine-readable output |
-| `bullet-points.md` | Scannable lists |
-| `html-structured.md` | Embeddable HTML fragments |
-| `markdown-focused.md` | Rich markdown documentation |
+| genui | Standalone HTML5 pages |
+| ultra-concise | Minimal, no-frills responses |
+| tts-summary | TTS-friendly (no markdown symbols) |
+| table-based | Data-heavy responses |
+| yaml-structured | Machine-readable output |
+| bullet-points | Scannable lists |
+| html-structured | Embeddable HTML fragments |
+| markdown-focused | Rich markdown documentation |
 
 ## Customization
 
-### Changing the Status Line
+### Adding Project Invariants
 
-Edit `.claude/settings.json` and change the `statusLine.command`:
-
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "python .claude/status_lines/v9_powerline.py",
-    "timeout": 3000
-  }
-}
-```
-
-### Adding Project Invariants (Requires Python)
-
-Edit `.claude/hooks/validators/invariant_validator.py` to define rules that all code must follow:
+Define rules that every code change must satisfy. Edit `.claude/hooks/validators/invariant_validator.py`:
 
 ```python
 INVARIANTS = [
@@ -226,69 +210,63 @@ INVARIANTS = [
 ]
 ```
 
+These run automatically on every Write/Edit and block violations.
+
 ### Configuring Auto-Allow Permissions
 
-The `permission_request.py` hook auto-allows safe operations. Edit the `SAFE_TOOLS` and `SAFE_BASH_PREFIXES` lists in `.claude/hooks/lifecycle/permission_request.py` to customize.
+The `permission_request.py` hook auto-approves safe operations (read-only tools, git commands, test runners). Customize the allowlists in `.claude/hooks/lifecycle/permission_request.py`.
 
 ### TTS Configuration
 
-Set these environment variables (or edit `.env.sample`):
-
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `ENGINEER_NAME` | "Developer" | Used in personalized TTS messages |
-| `ANTHROPIC_API_KEY` | (none) | Enables LLM-powered agent naming and completion messages |
+| `ENGINEER_NAME` | "Developer" | Personalized TTS messages |
+| `ANTHROPIC_API_KEY` | (none) | LLM-powered agent naming and completion messages |
 
-TTS rate and volume can be adjusted in `.claude/hooks/utils/constants.py`.
-
-### Adding Component Documentation
-
-For larger projects, create component-specific CONTEXT.md files:
-
-```
-src/
-├── api/
-│   └── CONTEXT.md    # API patterns
-├── core/
-│   └── CONTEXT.md    # Core logic patterns
-└── ui/
-    └── CONTEXT.md    # UI patterns
-```
+TTS rate and volume are adjustable in `.claude/hooks/utils/constants.py`.
 
 ## Architecture
 
-### Hook Utility System
-
-All hooks share a utility layer in `.claude/hooks/utils/`:
-
 ```
-hooks/utils/
-├── constants.py          # Shared config (paths, LLM model, TTS settings)
-├── platform_compat.py    # Cross-platform helpers (Windows + Unix)
-├── stdin_parser.py       # Standardized hook input parsing
-├── tts/
-│   ├── pyttsx3_tts.py    # TTS wrapper with graceful degradation
-│   └── tts_queue.py      # Cross-platform file locking for audio
-└── llm/
-    ├── anthropic_client.py   # Haiku API wrapper with wordlist fallback
-    └── task_summarizer.py    # Subagent task summarization
+.claude/
+  commands/           # 31 slash commands (markdown with YAML frontmatter)
+  agents/             # 9 agent definitions (team/builder, team/validator, meta-agent, etc.)
+  hooks/
+    intel/            # Codebase indexer, event logger, file tracker, test tracker
+    lifecycle/        # All 12 lifecycle event handlers
+    session/          # Multi-session coordination, task claiming, file conflicts
+    validators/       # Commit, JSON, markdown, ruff, ty, invariant validators
+    utils/            # Shared utilities:
+      file_lock.py        # Cross-platform OS-level file locking for JSON RMW
+      constants.py        # Shared config (paths, models, TTS settings)
+      platform_compat.py  # Windows/Unix compatibility
+      stdin_parser.py     # Hook input parsing
+      tts/                # TTS wrapper with graceful degradation
+      llm/                # Anthropic client with wordlist fallback
+  scripts/            # Work queue manager, worker launcher, session status
+  status_lines/       # 8 status bar styles
+  output-styles/      # 8 output format templates
+  skills/             # 3 reusable skill definitions
+  settings.json       # Hook wiring, permissions, env vars, status line config
 ```
 
 ### Graceful Degradation
 
-Every optional dependency degrades gracefully:
-- **pyttsx3 not installed**: TTS calls silently return False
-- **anthropic SDK not installed**: Agent names use wordlist fallback, completions use static messages
-- **ruff/mypy not installed**: Validators pass silently
-- **No ANTHROPIC_API_KEY**: LLM features fall back to zero-cost alternatives
+Every optional feature works when its dependency is missing:
+
+| Dependency | When Missing |
+|------------|-------------|
+| pyttsx3 | TTS calls silently return False |
+| anthropic SDK | Agent names use wordlist fallback, completions use static messages |
+| ruff / ty | Validators output empty JSON (pass silently) |
+| ANTHROPIC_API_KEY | LLM features fall back to zero-cost alternatives |
 
 ### Security
 
-- **Dangerous command checker**: Blocks `rm -rf`, `git reset --hard`, `DROP TABLE`, `.env` exposure, and 30+ destructive patterns
-- **Safe pattern allowlist**: `.env.sample`, `.env.example` etc. are not blocked
-- **Per-match analysis**: Chained commands like `cat .env && cat .env.sample` correctly block the dangerous part
-- **Research agent restricted**: Read-only Bash access (git ls-files, ls, dir only)
-- **Validator agent restricted**: Cannot Write, Edit, or NotebookEdit
+- **Dangerous command checker** blocks `rm -rf`, `git reset --hard`, `DROP TABLE`, `.env` exposure, and 30+ destructive patterns
+- **Safe pattern allowlist** permits `.env.sample`, `.env.example`, etc.
+- **Research agent** has read-only Bash access (git ls-files, ls, dir only)
+- **Validator agent** cannot Write, Edit, or NotebookEdit
 
 ## Requirements
 
@@ -297,15 +275,11 @@ Every optional dependency degrades gracefully:
 - Git
 - Python 3.11+ (hooks are Python scripts)
 
-**Optional (for enhanced features):**
-- `pyttsx3` — TTS spoken notifications
-- `anthropic` — LLM-powered agent naming and completion messages
-- `ruff` — Per-edit Python linting
-- `mypy` or `ty` — Per-edit type checking
+**Optional:** See [Optional Dependencies](#optional-dependencies) above.
 
 ## License
 
-MIT - Use freely in your projects.
+MIT
 
 ---
 

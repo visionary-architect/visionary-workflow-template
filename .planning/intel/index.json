@@ -1,7 +1,7 @@
 {
   "_comment": "Codebase index",
   "_version": "1.0",
-  "_lastUpdated": "2026-02-06T18:36:40.709183",
+  "_lastUpdated": "2026-02-06T19:03:47.832151",
   "files": {
     ".claude/status_lines/v1_basic.py": {
       "exports": [
@@ -20,26 +20,26 @@
     },
     ".claude/status_lines/v2_smart_prompts.py": {
       "exports": [
-        "BLUE",
-        "YELLOW",
-        "WHITE",
-        "RESET",
-        "get_session_data",
-        "MAGENTA",
-        "DIM",
-        "main",
-        "classify_prompt",
-        "RED",
-        "GREEN",
         "DEFAULT_CATEGORY",
+        "main",
+        "RESET",
+        "DIM",
         "CYAN",
-        "CATEGORIES"
+        "WHITE",
+        "CATEGORIES",
+        "BLUE",
+        "RED",
+        "MAGENTA",
+        "YELLOW",
+        "classify_prompt",
+        "get_session_data",
+        "GREEN"
       ],
       "imports": [
-        "sys",
         "pathlib",
-        "json",
+        "sys",
         "re",
+        "json",
         "os"
       ],
       "type": "module"
@@ -65,25 +65,25 @@
     },
     ".claude/status_lines/v6_context_bar.py": {
       "exports": [
-        "RESET",
+        "CYAN",
+        "FILLED",
+        "GREEN",
+        "YELLOW",
+        "BAR_WIDTH",
+        "EMPTY",
         "RED",
         "load_session_extras",
-        "CYAN",
-        "YELLOW",
-        "format_cost",
-        "FILLED",
-        "EMPTY",
-        "main",
-        "GREEN",
         "color_for_percentage",
-        "BAR_WIDTH",
+        "main",
+        "format_tokens",
+        "format_cost",
         "DIM",
-        "format_tokens"
+        "RESET"
       ],
       "imports": [
-        "os",
         "json",
-        "sys"
+        "sys",
+        "os"
       ],
       "type": "module"
     },
@@ -102,37 +102,37 @@
     },
     ".claude/status_lines/v9_powerline.py": {
       "exports": [
-        "FG_GREEN",
+        "FG_BLACK",
+        "BG_CYAN",
+        "bar_color_bg",
         "RESET",
-        "FG_CYAN",
+        "SEP",
+        "FILLED",
         "EMPTY",
         "BAR_WIDTH",
-        "BG_MAGENTA",
-        "FG_MAGENTA",
-        "FG_WHITE",
-        "SEP",
-        "bar_fg_after",
-        "BG_GREEN",
-        "format_cost",
         "shorten_path",
-        "BG_BLUE",
-        "BG_RED",
-        "FG_BLACK",
         "BOLD",
+        "FG_MAGENTA",
+        "format_cost",
+        "BG_BLUE",
+        "bar_fg_after",
         "get_git_branch",
-        "FG_YELLOW",
-        "bar_color_bg",
-        "BG_YELLOW",
-        "FILLED",
+        "BG_MAGENTA",
+        "BG_GREEN",
+        "FG_CYAN",
         "FG_BLUE",
         "main",
-        "BG_CYAN"
+        "BG_YELLOW",
+        "FG_GREEN",
+        "BG_RED",
+        "FG_YELLOW",
+        "FG_WHITE"
       ],
       "imports": [
-        "pathlib",
-        "json",
         "sys",
-        "os"
+        "os",
+        "json",
+        "pathlib"
       ],
       "type": "module"
     },
@@ -171,14 +171,14 @@
     },
     ".claude/hooks/validators/commit_validator.py": {
       "exports": [
-        "VALID_TYPES",
         "log_result",
-        "LOG_FILE",
-        "validate"
+        "VALID_TYPES",
+        "validate",
+        "LOG_FILE"
       ],
       "imports": [
-        "os",
         "sys",
+        "os",
         "datetime",
         "re",
         "subprocess"
@@ -326,25 +326,25 @@
     },
     ".claude/hooks/validators/invariant_validator.py": {
       "exports": [
-        "get_file_extension",
-        "check_invariant",
-        "validate_all",
-        "matches_component",
-        "log_result",
-        "SKIP_DIRS",
-        "validate",
         "PROJECT_ROOT",
-        "LOG_FILE",
         "DEFAULT_EXTENSIONS",
-        "find_project_root"
+        "get_file_extension",
+        "SKIP_DIRS",
+        "matches_component",
+        "check_invariant",
+        "log_result",
+        "find_project_root",
+        "LOG_FILE",
+        "validate_all",
+        "validate"
       ],
       "imports": [
         "sys",
-        "os",
-        "pathlib",
-        "re",
         "datetime",
-        "typing"
+        "re",
+        "pathlib",
+        "typing",
+        "os"
       ],
       "type": "module"
     },
@@ -612,6 +612,42 @@
         "utils.file_lock",
         "pathlib",
         "uuid"
+      ],
+      "type": "module"
+    },
+    ".claude/scripts/e2e_test.py": {
+      "exports": [
+        "print_result",
+        "main",
+        "run_hook"
+      ],
+      "imports": [
+        "subprocess",
+        "json",
+        "sys",
+        "os"
+      ],
+      "type": "module"
+    },
+    ".claude/scripts/e2e_session_test.py": {
+      "exports": [
+        "clean_session_state",
+        "backup_session_state",
+        "test_file_lock_concurrency",
+        "main",
+        "test_work_queue",
+        "restore_session_state",
+        "test_session_coordination",
+        "SESSION_DIR",
+        "BACKUP_FILES"
+      ],
+      "imports": [
+        "shutil",
+        "os",
+        "importlib.util",
+        "pathlib",
+        "sys",
+        "json"
       ],
       "type": "module"
     }

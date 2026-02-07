@@ -88,7 +88,7 @@ def validate(target_path: str = None) -> dict:
             issues.append(f"Subject line too long ({len(subject)} chars, max 72)")
         elif len(subject) > 50:
             # Warning, not an error
-            issues.append(f"Warning: Subject line is {len(subject)} chars (recommended: ≤50)")
+            issues.append(f"Warning: Subject line is {len(subject)} chars (recommended: <=50)")
 
         # Check 3: Subject line should not end with period
         if subject.endswith('.'):

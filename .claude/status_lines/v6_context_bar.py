@@ -12,6 +12,12 @@ import json
 import os
 import sys
 
+# Ensure UTF-8 output on Windows (needed for ANSI bar characters)
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 # ANSI colors
 CYAN = "\033[36m"

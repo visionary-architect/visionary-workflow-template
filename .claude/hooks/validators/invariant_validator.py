@@ -213,9 +213,9 @@ def validate(target_path: str) -> dict:
 
         message = f"Invariant violations in {os.path.basename(target_path)}:\n"
         if errors:
-            message += "\n".join(f"  ❌ {i}" for i in errors)
+            message += "\n".join(f"  [ERROR]{i}" for i in errors)
         if warnings:
-            message += "\n".join(f"  ⚠️  {i}" for i in warnings)
+            message += "\n".join(f"  [WARN]{i}" for i in warnings)
 
         # Only fail on errors, not warnings
         return {
@@ -225,7 +225,7 @@ def validate(target_path: str) -> dict:
 
     return {
         "valid": True,
-        "message": f"✅ All invariants satisfied: {os.path.basename(target_path)}"
+        "message": f"All invariants satisfied: {os.path.basename(target_path)}"
     }
 
 
@@ -265,7 +265,7 @@ def validate_all() -> dict:
 
     return {
         "valid": True,
-        "message": f"✅ All invariants satisfied across {files_checked} files"
+        "message": f"All invariants satisfied across {files_checked} files"
     }
 
 

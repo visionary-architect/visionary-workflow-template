@@ -18,6 +18,13 @@ import json
 import os
 import re
 import sys
+
+# Ensure UTF-8 output on Windows (needed for emoji/Unicode icons)
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 from pathlib import Path
 
 

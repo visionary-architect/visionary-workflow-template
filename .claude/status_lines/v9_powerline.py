@@ -15,6 +15,12 @@ import os
 import sys
 from pathlib import Path
 
+# Ensure UTF-8 output on Windows (needed for powerline/bar characters)
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 # ANSI colors and styles
 BG_BLUE = "\033[44m"

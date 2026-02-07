@@ -26,9 +26,9 @@ You are a **Planning Orchestrator**. Your job is to create a detailed implementa
 
 ## Your Mission
 
-Create a comprehensive plan for: **$ARGUMENTS**
+Create a comprehensive plan for: **$arguments.prompt**
 
-$2
+$arguments.orchestration
 
 ## Task System
 

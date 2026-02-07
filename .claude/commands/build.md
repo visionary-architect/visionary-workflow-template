@@ -18,7 +18,7 @@ Execute an implementation plan by deploying builder and validator agents.
 
 ## Workflow
 
-1. **Load the plan**: Read the plan file at `$ARGUMENTS`
+1. **Load the plan**: Read the plan file at `$arguments.plan`
 2. **Parse tasks**: Extract all tasks, their dependencies, and team assignments
 3. **Create task items**: Use TaskCreate for each task, setting `blockedBy` for dependencies
 4. **Deploy builders**: Launch builder agents (via Task tool) for implementation tasks
@@ -27,7 +27,7 @@ Execute an implementation plan by deploying builder and validator agents.
 
 ## Guard Clause
 
-If no plan path is provided (`$ARGUMENTS` is empty):
+If no plan path is provided (`$arguments.plan` is empty):
 
 1. List available plans in `.planning/`
 2. Ask the user which plan to execute
