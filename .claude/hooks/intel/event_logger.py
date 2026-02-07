@@ -24,6 +24,9 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from utils.file_lock import locked_json_rw
+
 SESSION_DIR = Path(".claude/session")
 EVENTS_FILE = SESSION_DIR / "events.jsonl"
 TIMELINE_FILE = Path("TIMELINE.md")
@@ -43,8 +46,10 @@ def main():
         stdin_data = sys.stdin.read()
         if stdin_data:
             data = json.loads(stdin_data)
-            tool_input = data.get("tool_input", {})
-            tool_result = data.get("tool_result", {})
+            tool_input = data.get("tool_input", {}) or {}
+            tool_result = data.get("tool_result", {}) or {}
+            if not isinstance(tool_input, dict):
+                return
         else:
             tool_input = {}
             tool_result = {}
@@ -56,7 +61,9 @@ def main():
 
     # Detect git tag creation
     if tool_name == "Bash":
-        command = tool_input.get("command", "")
+        command = tool_input.get("command", "") or ""
+        if not isinstance(command, str):
+            command = ""
         if "git tag" in command and "-a" in command:
             tag_match = re.search(r'git tag -a\s+(\S+)', command)
             if tag_match:
@@ -100,7 +107,7 @@ def main():
         stdout = tool_result.get("stdout", "") if isinstance(tool_result, dict) else ""
 
         # Check for phase completion markers
-        if "complete-milestone" in command or "Phase" in stdout and "Complete" in stdout:
+        if "complete-milestone" in command or ("Phase" in stdout and "Complete" in stdout):
             phase_match = re.search(r'[Pp]hase\s*(\d+)', command + stdout)
             if phase_match:
                 phase = phase_match.group(1)
@@ -190,26 +197,17 @@ def load_state():
     if not STATE_FILE.exists():
         return {}
     try:
-        with open(STATE_FILE) as f:
+        with open(STATE_FILE, encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return {}
 
 
 def save_state(state):
-    """Save event state atomically."""
-    temp_file = STATE_FILE.with_suffix(".tmp")
-    try:
-        # Merge with existing state
-        existing = load_state()
+    """Save event state atomically with file locking."""
+    with locked_json_rw(STATE_FILE, default={}) as (existing, save):
         existing.update(state)
-
-        with open(temp_file, "w") as f:
-            json.dump(existing, f, indent=2)
-        temp_file.replace(STATE_FILE)
-    except Exception:
-        if temp_file.exists():
-            temp_file.unlink()
+        save(existing)
 
 
 def log_event(event):

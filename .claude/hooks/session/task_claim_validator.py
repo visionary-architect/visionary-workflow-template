@@ -20,6 +20,9 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from utils.file_lock import locked_multi_json_rw
+
 SESSION_DIR = Path(".claude/session")
 LOCKS_FILE = SESSION_DIR / "task_locks.json"
 SESSIONS_FILE = SESSION_DIR / "sessions.json"
@@ -93,73 +96,85 @@ def get_current_session_tag():
 
 
 def validate_task_changes(todos, session_id, session_tag):
-    """Validate task status changes against claiming rules."""
-    locks = load_locks()
-    sessions = load_sessions()
-    warnings = []
-    updates = []
+    """Validate task status changes against claiming rules with dual-file locking."""
+    with locked_multi_json_rw(
+        (LOCKS_FILE, {}), (SESSIONS_FILE, {})
+    ) as entries:
+        locks, save_locks_fn = entries[0]
+        sessions, save_sessions_fn = entries[1]
 
-    for todo in todos:
-        content = todo.get("content", "")
-        status = todo.get("status", "")
-        task_id = generate_task_id(content)
+        warnings = []
+        updates = []
+        locks_changed = False
+        sessions_changed = False
 
-        # Check for in_progress claims
-        if status == "in_progress":
-            # Check if already claimed by another session
-            if task_id in locks:
-                lock = locks[task_id]
-                if lock.get("session_id") != session_id:
-                    other_tag = lock.get("session_tag", "unknown")
-                    warnings.append(
-                        f"CONFLICT: Task already claimed by @{other_tag}\n"
-                        f"  Task: {content[:50]}...\n"
-                        f"  Claimed at: {lock.get('claimed_at', 'unknown')}"
-                    )
-                    continue
+        for todo in todos:
+            content = todo.get("content", "")
+            status = todo.get("status", "")
+            task_id = generate_task_id(content)
 
-            # Claim the task
-            locks[task_id] = {
-                "session_id": session_id,
-                "session_tag": session_tag,
-                "claimed_at": datetime.now().isoformat(),
-                "task_content": content[:100]
-            }
-            updates.append(f"Claimed: {content[:40]}... (@{session_tag})")
+            # Check for in_progress claims
+            if status == "in_progress":
+                # Check if already claimed by another session
+                if task_id in locks:
+                    lock = locks[task_id]
+                    if lock.get("session_id") != session_id:
+                        other_tag = lock.get("session_tag", "unknown")
+                        warnings.append(
+                            f"CONFLICT: Task already claimed by @{other_tag}\n"
+                            f"  Task: {content[:50]}...\n"
+                            f"  Claimed at: {lock.get('claimed_at', 'unknown')}"
+                        )
+                        continue
 
-            # Update session's claimed tasks
-            if session_id in sessions:
-                claimed = sessions[session_id].get("claimed_tasks", [])
-                if task_id not in claimed:
-                    claimed.append(task_id)
-                    sessions[session_id]["claimed_tasks"] = claimed
+                # Claim the task
+                locks[task_id] = {
+                    "session_id": session_id,
+                    "session_tag": session_tag,
+                    "claimed_at": datetime.now().isoformat(),
+                    "task_content": content[:100]
+                }
+                locks_changed = True
+                updates.append(f"Claimed: {content[:40]}... (@{session_tag})")
 
-        # Check for completed tasks
-        elif status == "completed":
-            if task_id in locks:
-                lock = locks[task_id]
-                if lock.get("session_id") != session_id:
-                    other_tag = lock.get("session_tag", "unknown")
-                    warnings.append(
-                        f"WARNING: Completing task claimed by @{other_tag}\n"
-                        f"  Task: {content[:50]}..."
-                    )
+                # Update session's claimed tasks
+                if session_id in sessions:
+                    claimed = sessions[session_id].get("claimed_tasks", [])
+                    if task_id not in claimed:
+                        claimed.append(task_id)
+                        sessions[session_id]["claimed_tasks"] = claimed
+                        sessions_changed = True
 
-                # Release the lock
-                del locks[task_id]
+            # Check for completed tasks
+            elif status == "completed":
+                if task_id in locks:
+                    lock = locks[task_id]
+                    if lock.get("session_id") != session_id:
+                        other_tag = lock.get("session_tag", "unknown")
+                        warnings.append(
+                            f"WARNING: Completing task claimed by @{other_tag}\n"
+                            f"  Task: {content[:50]}..."
+                        )
 
-            # Remove from session's claimed tasks
-            if session_id in sessions:
-                claimed = sessions[session_id].get("claimed_tasks", [])
-                if task_id in claimed:
-                    claimed.remove(task_id)
-                    sessions[session_id]["claimed_tasks"] = claimed
+                    # Release the lock
+                    del locks[task_id]
+                    locks_changed = True
 
-    # Save updates
-    save_locks(locks)
-    save_sessions(sessions)
+                # Remove from session's claimed tasks
+                if session_id in sessions:
+                    claimed = sessions[session_id].get("claimed_tasks", [])
+                    if task_id in claimed:
+                        claimed.remove(task_id)
+                        sessions[session_id]["claimed_tasks"] = claimed
+                        sessions_changed = True
 
-    # Report warnings
+        # Save only if changed
+        if locks_changed:
+            save_locks_fn(locks)
+        if sessions_changed:
+            save_sessions_fn(sessions)
+
+    # Report warnings (outside the lock)
     if warnings:
         print("=" * 50)
         print("TASK COORDINATION WARNINGS")
@@ -185,7 +200,7 @@ def generate_task_id(content):
 
 
 def load_locks():
-    """Load task locks."""
+    """Load task locks (read-only, no locking needed)."""
     if not LOCKS_FILE.exists():
         return {}
     try:
@@ -193,41 +208,6 @@ def load_locks():
             return json.load(f)
     except Exception:
         return {}
-
-
-def save_locks(locks):
-    """Save task locks atomically."""
-    temp_file = LOCKS_FILE.with_suffix(".tmp")
-    try:
-        with open(temp_file, "w", encoding="utf-8") as f:
-            json.dump(locks, f, indent=2)
-        temp_file.replace(LOCKS_FILE)
-    except Exception:
-        if temp_file.exists():
-            temp_file.unlink()
-
-
-def load_sessions():
-    """Load sessions registry."""
-    if not SESSIONS_FILE.exists():
-        return {}
-    try:
-        with open(SESSIONS_FILE, encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
-
-
-def save_sessions(sessions):
-    """Save sessions atomically."""
-    temp_file = SESSIONS_FILE.with_suffix(".tmp")
-    try:
-        with open(temp_file, "w", encoding="utf-8") as f:
-            json.dump(sessions, f, indent=2)
-        temp_file.replace(SESSIONS_FILE)
-    except Exception:
-        if temp_file.exists():
-            temp_file.unlink()
 
 
 def get_claimed_tasks(session_tag=None):

@@ -413,7 +413,7 @@ def save_json(file_path: str, data: dict):
         json.dump(data, f, indent=2)
 
 
-def detect_naming_convention(names: list) -> str:
+def detect_naming_convention(names: list) -> str | None:
     """Detect the naming convention used in a list of names."""
     if not names:
         return None
@@ -602,7 +602,9 @@ def get_file_path_from_stdin() -> str:
         if stdin_data:
             data = json.loads(stdin_data)
             # PostToolUse hook format: tool_input.file_path
-            return data.get('tool_input', {}).get('file_path', '')
+            tool_input = data.get('tool_input', {})
+            file_path = tool_input.get('file_path', '') if isinstance(tool_input, dict) else ''
+            return file_path if isinstance(file_path, str) else None
     except (json.JSONDecodeError, KeyError, IOError):
         pass
     return None

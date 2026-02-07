@@ -15,6 +15,9 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from utils.file_lock import locked_json_rw
+
 SESSION_DIR = Path(".claude/session")
 FILE_LOCKS_FILE = SESSION_DIR / "file_locks.json"
 SESSION_ID_FILE = SESSION_DIR / "current_session_id.txt"
@@ -31,7 +34,9 @@ def main():
         stdin_data = sys.stdin.read()
         if stdin_data:
             data = json.loads(stdin_data)
-            tool_input = data.get("tool_input", {})
+            tool_input = data.get("tool_input", {}) or {}
+            if not isinstance(tool_input, dict):
+                return
         else:
             return  # No input, skip
     except Exception:
@@ -39,7 +44,7 @@ def main():
 
     # Get file path from tool input
     file_path = tool_input.get("file_path")
-    if not file_path:
+    if not file_path or not isinstance(file_path, str):
         return  # No file path, skip
 
     # Get current session info
@@ -53,18 +58,19 @@ def main():
     conflict = check_file_conflict(file_path, session_id)
 
     if conflict:
-        # Another session has this file locked
-        print(f"[CONFLICT] File '{conflict['file']}' is being edited by @{conflict['held_by']}")
-        print(f"[CONFLICT] Locked since: {conflict['since']}")
-        print(f"[CONFLICT] Proceeding may cause merge conflicts!")
+        # Another session has this file locked — warn via JSON so Claude sees it
+        reason = (
+            f"CONFLICT: File '{conflict['file']}' is being edited by @{conflict['held_by']} "
+            f"(locked since {conflict['since']}). Proceeding may cause merge conflicts!"
+        )
+        print(json.dumps({"hookSpecificOutput": {"reason": reason}}))
         # Note: We warn but don't block - let the user decide
-        # To block, uncomment: sys.exit(1)
+        # To block, change permissionDecision to "deny" and uncomment:
+        # print(json.dumps({"hookSpecificOutput": {"permissionDecision": "deny", "reason": reason}}))
+        # sys.exit(2)
     else:
-        # Claim the file
-        success = claim_file(file_path, session_id, session_tag)
-        if success:
-            # Silent claim - no output needed for normal operation
-            pass
+        # Claim the file — silent, no output needed
+        claim_file(file_path, session_id, session_tag)
 
 
 def get_session_id():
@@ -102,19 +108,6 @@ def load_file_locks():
         return {}
 
 
-def save_file_locks(locks):
-    """Save file locks atomically."""
-    SESSION_DIR.mkdir(parents=True, exist_ok=True)
-    temp_file = FILE_LOCKS_FILE.with_suffix(".tmp")
-    try:
-        with open(temp_file, "w", encoding="utf-8") as f:
-            json.dump(locks, f, indent=2)
-        temp_file.replace(FILE_LOCKS_FILE)
-    except Exception:
-        if temp_file.exists():
-            temp_file.unlink()
-
-
 def check_file_conflict(file_path, session_id):
     """Check if a file is locked by another session."""
     locks = load_file_locks()
@@ -149,8 +142,7 @@ def check_file_conflict(file_path, session_id):
 
 
 def claim_file(file_path, session_id, session_tag):
-    """Claim a file for editing."""
-    locks = load_file_locks()
+    """Claim a file for editing with file locking."""
     now = datetime.now()
 
     try:
@@ -158,14 +150,15 @@ def claim_file(file_path, session_id, session_tag):
     except Exception:
         file_key = file_path
 
-    locks[file_key] = {
-        "session_id": session_id,
-        "session_tag": session_tag,
-        "claimed_at": now.isoformat(),
-        "last_touched": now.isoformat(),
-        "file_path": file_path
-    }
-    save_file_locks(locks)
+    with locked_json_rw(FILE_LOCKS_FILE, default={}) as (locks, save):
+        locks[file_key] = {
+            "session_id": session_id,
+            "session_tag": session_tag,
+            "claimed_at": now.isoformat(),
+            "last_touched": now.isoformat(),
+            "file_path": file_path
+        }
+        save(locks)
     return True
 
 

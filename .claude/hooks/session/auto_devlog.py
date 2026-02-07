@@ -18,11 +18,11 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-SESSION_DIR = Path(".claude/session")
+SESSION_DIR = Path(os.environ.get("CLAUDE_PROJECT_DIR", ".")) / ".claude" / "session"
 SNAPSHOT_FILE = SESSION_DIR / "last_snapshot.json"
 LOCKS_FILE = SESSION_DIR / "task_locks.json"
 SESSION_ID_FILE = SESSION_DIR / "current_session_id.txt"
-DEVLOG_FILE = Path("DEVLOG.md")
+DEVLOG_FILE = Path(os.environ.get("CLAUDE_PROJECT_DIR", ".")) / "DEVLOG.md"
 MARKER_FILE = SESSION_DIR / "session_logged.marker"
 
 
@@ -55,9 +55,20 @@ def was_session_logged():
         return False
 
     try:
-        # Check if marker is from today (same session)
-        marker_date = datetime.fromtimestamp(MARKER_FILE.stat().st_mtime).date()
-        return marker_date == datetime.now().date()
+        # Use session ID for marker comparison (not date).
+        # Previous date-based check failed when two sessions ran on the same day.
+        current_session_id = ""
+        if SESSION_ID_FILE.exists():
+            current_session_id = SESSION_ID_FILE.read_text().strip()
+
+        if not current_session_id:
+            # Fallback: date-based check if no session ID available
+            marker_date = datetime.fromtimestamp(MARKER_FILE.stat().st_mtime).date()
+            return marker_date == datetime.now().date()
+
+        # Check if marker contains current session ID
+        marker_content = MARKER_FILE.read_text(encoding="utf-8").strip()
+        return marker_content == current_session_id
     except Exception:
         return False
 
@@ -66,7 +77,12 @@ def mark_session_logged():
     """Mark this session as logged to prevent duplicate entries."""
     try:
         SESSION_DIR.mkdir(parents=True, exist_ok=True)
-        MARKER_FILE.touch()
+        # Write session ID to marker instead of just touching the file.
+        # This allows per-session detection instead of per-day.
+        session_id = ""
+        if SESSION_ID_FILE.exists():
+            session_id = SESSION_ID_FILE.read_text().strip()
+        MARKER_FILE.write_text(session_id, encoding="utf-8")
     except Exception:
         pass
 
@@ -177,10 +193,10 @@ def append_devlog_entry(session_data):
 
     # Build minimal entry
     date = session_data["date"]
-    time = session_data["time"]
+    time_str = session_data["time"]
 
     entry_lines = [
-        f"\n### Session: {date} (Auto-captured at {time})\n",
+        f"\n### Session: {date} (Auto-captured at {time_str})\n",
         "**Note:** This session ended without /pause-work.\n\n"
     ]
 

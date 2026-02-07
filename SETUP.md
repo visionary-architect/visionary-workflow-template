@@ -9,7 +9,7 @@ This guide walks you through setting up visionary_template_1 for your project.
 - Git
 
 **Optional (for advanced features):**
-- Python 3.8+ (only if using codebase indexer or validators)
+- Python 3.11+ (only if using codebase indexer or validators)
 
 ---
 
@@ -197,7 +197,7 @@ The `/init-project` wizard configures permissions for your primary tech stack. I
 
 ## Optional Features
 
-These features provide enhanced functionality but require Python 3.8+. They are **disabled by default** to keep the template tech-stack agnostic.
+These features provide enhanced functionality but require Python 3.11+. They are **disabled by default** to keep the template tech-stack agnostic.
 
 ### Codebase Indexer
 
@@ -389,7 +389,7 @@ Workers automatically coordinate via session registry and file locks.
 ```
 your-project/
 ├── .claude/
-│   ├── commands/           # 25 workflow commands
+│   ├── commands/           # 31 workflow commands
 │   │   ├── init-project.md
 │   │   ├── discuss-phase.md
 │   │   ├── plan-phase.md
@@ -397,7 +397,7 @@ your-project/
 │   │   ├── verify-work.md
 │   │   ├── pause-work.md
 │   │   ├── resume-work.md
-│   │   └── ... (18 more)
+│   │   └── ... (24 more)
 │   ├── skills/             # Reusable skills
 │   │   ├── conventional-commits.md
 │   │   ├── test-detection.md
@@ -405,11 +405,20 @@ your-project/
 │   ├── agents/             # Specialized agents
 │   │   ├── code-simplifier.md
 │   │   ├── debug-helper.md
-│   │   └── verify-app.md
+│   │   ├── verify-app.md
+│   │   ├── meta-agent.md
+│   │   ├── research.md
+│   │   ├── greeting.md
+│   │   ├── work-completion.md
+│   │   └── team/           # Team agents (builder, validator)
 │   ├── hooks/              # Automation hooks (requires Python)
 │   │   ├── intel/          # Codebase intelligence
+│   │   ├── lifecycle/      # Core lifecycle hooks
 │   │   ├── session/        # Multi-session coordination
-│   │   └── validators/     # Code validators
+│   │   ├── validators/     # Code validators
+│   │   └── utils/          # Shared utilities (TTS, LLM, constants)
+│   ├── status_lines/       # 8 status line styles
+│   ├── output-styles/      # 8 output format templates
 │   ├── scripts/            # Worker launcher scripts
 │   │   ├── work_queue.py
 │   │   ├── launch-worker.py
@@ -438,7 +447,7 @@ your-project/
 
 ### Commands not found
 
-Ensure `.claude/commands/` contains all 25 command files with proper YAML frontmatter.
+Ensure `.claude/commands/` contains all 31 command files with proper YAML frontmatter.
 
 ### Tasks not persisting
 
@@ -446,7 +455,7 @@ Verify `CLAUDE_CODE_TASK_LIST_ID` is set in `.claude/settings.json`.
 
 ### Hooks not running
 
-Hooks require Python 3.8+. Check that:
+Hooks require Python 3.11+. Check that:
 1. Python is installed and in your PATH
 2. Hooks are configured in `.claude/settings.json`
 3. Permissions include the hook commands

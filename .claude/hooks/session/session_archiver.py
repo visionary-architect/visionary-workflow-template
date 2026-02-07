@@ -30,8 +30,9 @@ def main():
     )
     args = parser.parse_args()
 
-    cutoff_date = datetime.now() - timedelta(days=args.days)
-    print(f"Archiving sessions older than {cutoff_date.strftime('%Y-%m-%d')} ({args.days} days)")
+    days = min(max(args.days, 1), 36500)  # Clamp to prevent OverflowError
+    cutoff_date = datetime.now() - timedelta(days=days)
+    print(f"Archiving sessions older than {cutoff_date.strftime('%Y-%m-%d')} ({days} days)")
     print("=" * 60)
 
     # Archive STATE.md Session Log

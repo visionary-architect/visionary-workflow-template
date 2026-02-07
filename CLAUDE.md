@@ -142,11 +142,25 @@ This project uses the Visionary workflow:
 ### Codebase Intelligence
 - **`/analyze-codebase`** - Bootstrap intelligence for existing code
 
-### Utility Commands
+### Planning & Execution
+- **`/plan-w-team`** - Team-orchestrated planning with builder/validator agents
+- **`/build <plan>`** - Deploy builder/validator agents to execute a plan
+- **`/cook`** - Launch parallel subagents for concurrent work
+
+### Research & Context
+- **`/prime`** - Load project context (read-only)
+- **`/question`** - Read-only research mode
+
+### Quality & Review
 - **`/commit-push-pr`** - Automated commit, push, and PR creation
 - **`/test`** - Smart test runner based on changes
 - **`/explain`** - Non-technical code explanations
 - **`/review`** - Comprehensive code review
+- **`/full-review-pipeline`** - Complete code review pipeline with quality gates
+- **`/check-invariants`** - Validate code against project-defined invariants
+
+### Status & Monitoring
+- **`/update-status-line`** - Write custom key-value pairs to status line display
 
 ---
 
@@ -230,9 +244,20 @@ When multiple sessions work on the same task list:
 
 ## Specialized Agents Available
 
+### Team Agents (used by `/build`)
+- **`team/builder`** (opus, cyan) - Implements code with per-edit ruff/ty validation
+- **`team/validator`** (opus, yellow) - Reviews code (read-only, cannot Write/Edit)
+
+### Utility Agents
+- **`meta-agent`** (sonnet, magenta) - Creates new agents on demand from Anthropic docs
+- **`research`** (sonnet, magenta) - Deep web research with multi-source verification
 - **`code-simplifier`** - Reviews code and suggests simplifications
 - **`verify-app`** - QA testing and verification after changes
 - **`debug-helper`** - Systematic debugging assistance
+
+### Session Agents
+- **`greeting`** (haiku, green) - Proactive session greeting
+- **`work-completion`** (haiku, green) - TTS work summaries
 
 ---
 

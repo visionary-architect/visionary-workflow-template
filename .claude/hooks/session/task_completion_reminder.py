@@ -30,20 +30,13 @@ def main():
         task_id = claimed_task.get("id", "unknown")
         desc = claimed_task.get("description", "")[:60]
 
-        print()
-        print("=" * 60)
-        print("  TASK COMPLETION REMINDER")
-        print("=" * 60)
-        print()
-        print(f"  You have a claimed task that wasn't marked complete:")
-        print(f"  {task_id}: {desc}...")
-        print()
-        print("  Options:")
-        print("    - Run /complete-task to mark it done")
-        print("    - The task will remain claimed for 30 min")
-        print("    - After 30 min, it returns to 'available'")
-        print()
-        print("=" * 60)
+        reason = (
+            f"TASK COMPLETION REMINDER: You have a claimed task that wasn't marked complete: "
+            f"{task_id}: {desc}... "
+            f"Run /complete-task to mark it done, or it returns to 'available' after 30 min."
+        )
+        # Output structured JSON for Stop hook protocol
+        print(json.dumps({"result": "block", "reason": reason}))
 
 
 def get_startup_task():

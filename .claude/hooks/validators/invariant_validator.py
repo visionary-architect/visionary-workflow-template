@@ -322,5 +322,10 @@ if __name__ == "__main__":
     else:
         result = validate(target)
 
-    print(result["message"])
-    sys.exit(0 if result["valid"] else 1)
+    # Output structured JSON for PostToolUse hook protocol
+    import json
+    if result["valid"]:
+        print(json.dumps({"decision": "approve", "reason": result["message"]}))
+    else:
+        print(json.dumps({"decision": "block", "reason": result["message"]}))
+    sys.exit(0)

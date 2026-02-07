@@ -83,7 +83,7 @@ def main():
 
         # Atomic write
         temp_file = CACHE_DIR / "context_cache.tmp"
-        with open(temp_file, "w") as f:
+        with open(temp_file, "w", encoding="utf-8") as f:
             json.dump(cache, f, indent=2)
         temp_file.replace(CACHE_FILE)
         HASH_FILE.write_text(current_hash)

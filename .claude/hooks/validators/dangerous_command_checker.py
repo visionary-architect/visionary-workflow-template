@@ -56,6 +56,27 @@ DANGEROUS_PATTERNS = [
 
     # Pip/Package operations that might break environment
     (r"\bpip\s+uninstall\s+.*-y\b", "pip uninstall -y removes packages without confirmation"),
+
+    # Environment file exposure (from hooks-mastery)
+    (r"\bcat\s+\.env\b", "cat .env may expose secrets in output"),
+    (r"\btype\s+\.env\b", "type .env may expose secrets in output (Windows)"),
+    (r"\becho\s+.*>\s*\.env\b", "overwriting .env may destroy environment configuration"),
+    (r"\bmore\s+\.env\b", "more .env may expose secrets in output"),
+    (r"\bless\s+\.env\b", "less .env may expose secrets in output"),
+
+    # Dangerous path traversal
+    (r"\.\./\.\./\.\.", "triple parent traversal may target files outside project"),
+    (r"/etc/passwd", "accessing /etc/passwd is a security concern"),
+    (r"/etc/shadow", "accessing /etc/shadow is a security concern"),
+]
+
+# Patterns that look dangerous but are actually safe (allowlist)
+SAFE_ENV_PATTERNS = [
+    r"\.env\.sample",
+    r"\.env\.example",
+    r"\.env\.template",
+    r"\.env\.test",
+    r"\.env\.local\.example",
 ]
 
 
@@ -70,11 +91,12 @@ def main():
             stdin_data = sys.stdin.read()
             if stdin_data:
                 data = json.loads(stdin_data)
-                command = data.get("tool_input", {}).get("command", "")
+                tool_input = data.get("tool_input", {})
+                command = tool_input.get("command", "") if isinstance(tool_input, dict) else ""
         except Exception:
             pass
 
-    if not command:
+    if not command or not isinstance(command, str):
         # No command to check
         sys.exit(0)
 
@@ -87,25 +109,33 @@ def main():
             pattern, description = pattern_tuple
             flags = 0
 
-        if re.search(pattern, command, flags):
+        match = re.search(pattern, command, flags)
+        if match:
+            # For .env-related warnings, check if the specific matched segment
+            # is a safe variant (e.g., .env.sample). Per-match, not per-command,
+            # so "cat .env && cat .env.sample" blocks on the first but not second.
+            if ".env" in description:
+                match_start = max(0, match.start() - 5)
+                match_end = min(len(command), match.end() + 20)
+                context = command[match_start:match_end]
+                if any(re.search(p, context) for p in SAFE_ENV_PATTERNS):
+                    continue
             warnings.append(description)
 
     if warnings:
-        print("=" * 60)
-        print("DANGEROUS COMMAND DETECTED")
-        print("=" * 60)
-        print()
-        print(f"Command: {command[:200]}")
-        print()
-        print("Warnings:")
-        for warning in warnings:
-            print(f"  - {warning}")
-        print()
-        print("This command may cause irreversible data loss.")
-        print("=" * 60)
-
+        reason = (
+            f"DANGEROUS COMMAND BLOCKED: {command[:200]}\n"
+            f"Warnings: {'; '.join(warnings)}\n"
+            f"This command may cause irreversible data loss."
+        )
+        # Output structured JSON for PreToolUse hook protocol
+        print(json.dumps({
+            "hookSpecificOutput": {
+                "permissionDecision": "deny",
+                "reason": reason
+            }
+        }))
         # Exit with code 2 to block the command
-        # Claude Code will show this output as a warning
         sys.exit(2)
 
     # Command is safe

@@ -35,7 +35,7 @@ def main():
 
     # Atomic write - write to temp, then rename
     try:
-        with open(temp_file, "w") as f:
+        with open(temp_file, "w", encoding="utf-8") as f:
             json.dump(snapshot, f, indent=2)
         temp_file.replace(output_file)
         print(f"Session snapshot saved to {output_file}")

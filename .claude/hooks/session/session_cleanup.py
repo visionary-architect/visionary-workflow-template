@@ -15,6 +15,9 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from utils.file_lock import locked_json_rw
+
 SESSION_DIR = Path(".claude/session")
 SESSIONS_FILE = SESSION_DIR / "sessions.json"
 LOCKS_FILE = SESSION_DIR / "task_locks.json"
@@ -85,103 +88,42 @@ def load_sessions():
         return {}
 
 
-def save_sessions(sessions):
-    """Save sessions atomically."""
-    temp_file = SESSIONS_FILE.with_suffix(".tmp")
-    try:
-        with open(temp_file, "w", encoding="utf-8") as f:
-            json.dump(sessions, f, indent=2)
-        temp_file.replace(SESSIONS_FILE)
-    except Exception:
-        if temp_file.exists():
-            temp_file.unlink()
-
-
-def load_locks():
-    """Load task locks."""
-    if not LOCKS_FILE.exists():
-        return {}
-    try:
-        with open(LOCKS_FILE, encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
-
-
-def save_locks(locks):
-    """Save task locks atomically."""
-    temp_file = LOCKS_FILE.with_suffix(".tmp")
-    try:
-        with open(temp_file, "w", encoding="utf-8") as f:
-            json.dump(locks, f, indent=2)
-        temp_file.replace(LOCKS_FILE)
-    except Exception:
-        if temp_file.exists():
-            temp_file.unlink()
-
-
 def release_all_claims(session_id):
-    """Release all task claims held by this session."""
-    locks = load_locks()
+    """Release all task claims held by this session with file locking."""
+    with locked_json_rw(LOCKS_FILE, default={}) as (locks, save):
+        released = []
+        for task_id, lock in list(locks.items()):
+            if lock.get("session_id") == session_id:
+                released.append(lock.get("task_content", task_id)[:40])
+                del locks[task_id]
 
-    released = []
-    for task_id, lock in list(locks.items()):
-        if lock.get("session_id") == session_id:
-            released.append(lock.get("task_content", task_id)[:40])
-            del locks[task_id]
-
-    if released:
-        save_locks(locks)
+        if released:
+            save(locks)
 
     return len(released)
 
 
-def load_file_locks():
-    """Load file locks."""
-    if not FILE_LOCKS_FILE.exists():
-        return {}
-    try:
-        with open(FILE_LOCKS_FILE, encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
-
-
-def save_file_locks(locks):
-    """Save file locks atomically."""
-    temp_file = FILE_LOCKS_FILE.with_suffix(".tmp")
-    try:
-        with open(temp_file, "w", encoding="utf-8") as f:
-            json.dump(locks, f, indent=2)
-        temp_file.replace(FILE_LOCKS_FILE)
-    except Exception:
-        if temp_file.exists():
-            temp_file.unlink()
-
-
 def release_all_file_locks(session_id):
-    """Release all file locks held by this session."""
-    locks = load_file_locks()
+    """Release all file locks held by this session with file locking."""
+    with locked_json_rw(FILE_LOCKS_FILE, default={}) as (locks, save):
+        released = []
+        for file_key, lock in list(locks.items()):
+            if lock.get("session_id") == session_id:
+                released.append(lock.get("file_path", file_key)[:40])
+                del locks[file_key]
 
-    released = []
-    for file_key, lock in list(locks.items()):
-        if lock.get("session_id") == session_id:
-            released.append(lock.get("file_path", file_key)[:40])
-            del locks[file_key]
-
-    if released:
-        save_file_locks(locks)
+        if released:
+            save(locks)
 
     return len(released)
 
 
 def remove_session(session_id):
-    """Remove session from registry."""
-    sessions = load_sessions()
-
-    if session_id in sessions:
-        del sessions[session_id]
-        save_sessions(sessions)
+    """Remove session from registry with file locking."""
+    with locked_json_rw(SESSIONS_FILE, default={}) as (sessions, save):
+        if session_id in sessions:
+            del sessions[session_id]
+            save(sessions)
 
 
 def clear_session_files():

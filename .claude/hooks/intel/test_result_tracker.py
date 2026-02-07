@@ -68,7 +68,7 @@ def main():
     # Atomic write
     temp_file = SESSION_DIR / "test_state.tmp"
     try:
-        with open(temp_file, "w") as f:
+        with open(temp_file, "w", encoding="utf-8") as f:
             json.dump(state, f, indent=2)
         temp_file.replace(STATE_FILE)
         print(f"Test state tracked: {state['status']}")

@@ -1,0 +1,619 @@
+{
+  "_comment": "Codebase index",
+  "_version": "1.0",
+  "_lastUpdated": "2026-02-06T18:36:40.709183",
+  "files": {
+    ".claude/status_lines/v1_basic.py": {
+      "exports": [
+        "CYAN",
+        "main",
+        "MAGENTA",
+        "GREEN",
+        "RESET"
+      ],
+      "imports": [
+        "os",
+        "sys",
+        "json"
+      ],
+      "type": "module"
+    },
+    ".claude/status_lines/v2_smart_prompts.py": {
+      "exports": [
+        "BLUE",
+        "YELLOW",
+        "WHITE",
+        "RESET",
+        "get_session_data",
+        "MAGENTA",
+        "DIM",
+        "main",
+        "classify_prompt",
+        "RED",
+        "GREEN",
+        "DEFAULT_CATEGORY",
+        "CYAN",
+        "CATEGORIES"
+      ],
+      "imports": [
+        "sys",
+        "pathlib",
+        "json",
+        "re",
+        "os"
+      ],
+      "type": "module"
+    },
+    ".claude/status_lines/v3_agent_sessions.py": {
+      "exports": [
+        "RESET",
+        "TRUNCATION",
+        "BRIGHT_RED",
+        "DIM",
+        "main",
+        "truncate",
+        "CYAN",
+        "get_session_data"
+      ],
+      "imports": [
+        "sys",
+        "pathlib",
+        "os",
+        "json"
+      ],
+      "type": "module"
+    },
+    ".claude/status_lines/v6_context_bar.py": {
+      "exports": [
+        "RESET",
+        "RED",
+        "load_session_extras",
+        "CYAN",
+        "YELLOW",
+        "format_cost",
+        "FILLED",
+        "EMPTY",
+        "main",
+        "GREEN",
+        "color_for_percentage",
+        "BAR_WIDTH",
+        "DIM",
+        "format_tokens"
+      ],
+      "imports": [
+        "os",
+        "json",
+        "sys"
+      ],
+      "type": "module"
+    },
+    ".claude/status_lines/v8_token_stats.py": {
+      "exports": [
+        "main",
+        "format_cost",
+        "format_tokens"
+      ],
+      "imports": [
+        "sys",
+        "json",
+        "os"
+      ],
+      "type": "module"
+    },
+    ".claude/status_lines/v9_powerline.py": {
+      "exports": [
+        "FG_GREEN",
+        "RESET",
+        "FG_CYAN",
+        "EMPTY",
+        "BAR_WIDTH",
+        "BG_MAGENTA",
+        "FG_MAGENTA",
+        "FG_WHITE",
+        "SEP",
+        "bar_fg_after",
+        "BG_GREEN",
+        "format_cost",
+        "shorten_path",
+        "BG_BLUE",
+        "BG_RED",
+        "FG_BLACK",
+        "BOLD",
+        "get_git_branch",
+        "FG_YELLOW",
+        "bar_color_bg",
+        "BG_YELLOW",
+        "FILLED",
+        "FG_BLUE",
+        "main",
+        "BG_CYAN"
+      ],
+      "imports": [
+        "pathlib",
+        "json",
+        "sys",
+        "os"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/lifecycle/session_end.py": {
+      "exports": [
+        "main",
+        "cleanup_tmp_files",
+        "finalize_session",
+        "STALE_TMP_MAX_AGE"
+      ],
+      "imports": [
+        "utils.constants",
+        "json",
+        "utils.stdin_parser",
+        "pathlib",
+        "sys",
+        "time"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/lifecycle/post_tool_use_failure.py": {
+      "exports": [
+        "log_error_jsonl",
+        "update_session_errors",
+        "main"
+      ],
+      "imports": [
+        "json",
+        "utils.constants",
+        "sys",
+        "time",
+        "pathlib",
+        "utils.stdin_parser"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/validators/commit_validator.py": {
+      "exports": [
+        "VALID_TYPES",
+        "log_result",
+        "LOG_FILE",
+        "validate"
+      ],
+      "imports": [
+        "os",
+        "sys",
+        "datetime",
+        "re",
+        "subprocess"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/intel/event_logger.py": {
+      "exports": [
+        "load_state",
+        "SESSION_DIR",
+        "log_event",
+        "update_timeline",
+        "get_recent_events",
+        "EVENTS_FILE",
+        "main",
+        "TIMELINE_FILE",
+        "STATE_FILE",
+        "save_state"
+      ],
+      "imports": [
+        "datetime",
+        "json",
+        "sys",
+        "utils.file_lock",
+        "re",
+        "subprocess",
+        "os",
+        "pathlib"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/intel/codebase_indexer.py": {
+      "exports": [
+        "extract_python_info",
+        "extract_java_info",
+        "extract_file_info",
+        "INDEX_FILE",
+        "extract_go_info",
+        "SUMMARY_FILE",
+        "should_index",
+        "get_file_path_from_stdin",
+        "save_json",
+        "INTEL_DIR",
+        "SKIP_DIRS",
+        "generate_summary",
+        "extract_rust_info",
+        "extract_js_ts_info",
+        "load_json",
+        "CONVENTIONS_FILE",
+        "index_file",
+        "detect_naming_convention",
+        "main",
+        "CODE_EXTENSIONS",
+        "update_conventions",
+        "extract_c_cpp_info"
+      ],
+      "imports": [
+        "os",
+        "pathlib",
+        "datetime",
+        "json",
+        "sys",
+        "re"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/session/auto_devlog.py": {
+      "exports": [
+        "main",
+        "LOCKS_FILE",
+        "MARKER_FILE",
+        "DEVLOG_FILE",
+        "append_devlog_entry",
+        "SESSION_DIR",
+        "get_session_data",
+        "SNAPSHOT_FILE",
+        "SESSION_ID_FILE",
+        "get_claimed_tasks",
+        "was_session_logged",
+        "mark_session_logged"
+      ],
+      "imports": [
+        "pathlib",
+        "json",
+        "subprocess",
+        "datetime",
+        "re",
+        "sys",
+        "os"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/utils/__init__.py": {
+      "exports": [],
+      "imports": [],
+      "type": "module"
+    },
+    ".claude/hooks/utils/llm/__init__.py": {
+      "exports": [],
+      "imports": [],
+      "type": "module"
+    },
+    ".claude/hooks/utils/tts/__init__.py": {
+      "exports": [],
+      "imports": [],
+      "type": "module"
+    },
+    ".claude/hooks/session/file_conflict_checker.py": {
+      "exports": [
+        "claim_file",
+        "LOCK_TIMEOUT_SECONDS",
+        "main",
+        "check_file_conflict",
+        "get_session_tag",
+        "load_file_locks",
+        "get_session_id",
+        "SESSION_ID_FILE",
+        "FILE_LOCKS_FILE",
+        "SESSION_DIR",
+        "SESSION_TAG_FILE"
+      ],
+      "imports": [
+        "sys",
+        "utils.file_lock",
+        "json",
+        "os",
+        "pathlib",
+        "datetime"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/validators/dangerous_command_checker.py": {
+      "exports": [
+        "DANGEROUS_PATTERNS",
+        "SAFE_ENV_PATTERNS",
+        "main"
+      ],
+      "imports": [
+        "re",
+        "os",
+        "sys",
+        "json"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/validators/invariant_validator.py": {
+      "exports": [
+        "get_file_extension",
+        "check_invariant",
+        "validate_all",
+        "matches_component",
+        "log_result",
+        "SKIP_DIRS",
+        "validate",
+        "PROJECT_ROOT",
+        "LOG_FILE",
+        "DEFAULT_EXTENSIONS",
+        "find_project_root"
+      ],
+      "imports": [
+        "sys",
+        "os",
+        "pathlib",
+        "re",
+        "datetime",
+        "typing"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/session/task_completion_reminder.py": {
+      "exports": [
+        "get_claimed_task_for_session",
+        "WORK_QUEUE_FILE",
+        "STARTUP_CONTEXT_FILE",
+        "main",
+        "SESSION_DIR",
+        "get_startup_task"
+      ],
+      "imports": [
+        "json",
+        "pathlib",
+        "os",
+        "datetime"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/session/session_maintenance.py": {
+      "exports": [
+        "EVENTS_FILE",
+        "archive_old_sessions",
+        "ARCHIVE_DAYS",
+        "EVENTS_ARCHIVE",
+        "archive_devlog_sessions",
+        "SESSION_DIR",
+        "archive_state_sessions",
+        "main",
+        "rotate_events"
+      ],
+      "imports": [
+        "datetime",
+        "re",
+        "sys",
+        "json",
+        "pathlib",
+        "os"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/session/warmup_cache.py": {
+      "exports": [
+        "get_task_claims",
+        "get_startup_context",
+        "SESSION_DURATION",
+        "get_uncommitted_files",
+        "main",
+        "LOCK_FILE",
+        "extract_active_issues",
+        "get_file_locks",
+        "get_work_queue_summary",
+        "CACHE_DIR",
+        "extract_field",
+        "extract_handoff_notes",
+        "get_recent_commits",
+        "get_active_sessions",
+        "compute_source_hash",
+        "HASH_FILE",
+        "extract_current_phase",
+        "CACHE_TTL",
+        "CACHE_FILE",
+        "get_active_tasks"
+      ],
+      "imports": [
+        "re",
+        "hashlib",
+        "subprocess",
+        "pathlib",
+        "json",
+        "datetime"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/session/auto_snapshot.py": {
+      "exports": [
+        "get_git_status",
+        "get_claimed_tasks",
+        "get_active_tasks",
+        "get_modified_files",
+        "get_current_branch",
+        "main",
+        "get_staged_files"
+      ],
+      "imports": [
+        "json",
+        "datetime",
+        "os",
+        "pathlib",
+        "subprocess"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/intel/file_change_tracker.py": {
+      "exports": [
+        "DECAY_FACTOR",
+        "apply_decay",
+        "trim_entries",
+        "SESSION_DIR",
+        "main",
+        "load_frequency_data",
+        "update_frequency",
+        "MAX_FILES",
+        "get_hot_files",
+        "FREQUENCY_FILE",
+        "save_frequency_data"
+      ],
+      "imports": [
+        "datetime",
+        "sys",
+        "pathlib",
+        "json",
+        "os"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/intel/test_result_tracker.py": {
+      "exports": [
+        "main",
+        "SESSION_DIR",
+        "PYTEST_CACHE",
+        "generate_summary",
+        "is_test_command",
+        "STATE_FILE",
+        "parse_pytest_cache"
+      ],
+      "imports": [
+        "os",
+        "datetime",
+        "sys",
+        "pathlib",
+        "re",
+        "json"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/utils/file_lock.py": {
+      "exports": [
+        "locked_json_rw",
+        "locked_multi_json_rw"
+      ],
+      "imports": [
+        "pathlib",
+        "sys",
+        "time",
+        "contextlib",
+        "json",
+        "os"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/session/session_cleanup.py": {
+      "exports": [
+        "SESSION_ID_FILE",
+        "get_session_tag",
+        "release_all_claims",
+        "SESSION_DIR",
+        "FILE_LOCKS_FILE",
+        "remove_session",
+        "release_all_file_locks",
+        "SESSION_TAG_FILE",
+        "get_current_session_id",
+        "LOCKS_FILE",
+        "load_sessions",
+        "log_session_summary",
+        "main",
+        "clear_session_files",
+        "SESSIONS_FILE"
+      ],
+      "imports": [
+        "pathlib",
+        "json",
+        "datetime",
+        "sys",
+        "utils.file_lock",
+        "os"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/session/session_coordinator.py": {
+      "exports": [
+        "release_task_claims",
+        "claim_file",
+        "get_or_generate_session_tag",
+        "load_locks",
+        "cleanup_stale_sessions",
+        "SESSION_TAG_FILE",
+        "load_file_locks",
+        "LOCKS_FILE",
+        "HEARTBEAT_INTERVAL_SECONDS",
+        "release_file",
+        "FILE_LOCKS_FILE",
+        "release_all_file_locks",
+        "get_session_id",
+        "register_session",
+        "main",
+        "check_file_conflict",
+        "get_file_locks_for_session",
+        "check_conflicts",
+        "SESSIONS_FILE",
+        "SESSION_DIR",
+        "load_sessions",
+        "get_active_sessions",
+        "STALE_THRESHOLD_MINUTES"
+      ],
+      "imports": [
+        "hashlib",
+        "sys",
+        "datetime",
+        "os",
+        "pathlib",
+        "json",
+        "utils.file_lock"
+      ],
+      "type": "module"
+    },
+    ".claude/hooks/session/task_claim_validator.py": {
+      "exports": [
+        "SESSION_DIR",
+        "SESSION_TAG_FILE",
+        "main",
+        "SESSIONS_FILE",
+        "get_current_session_id",
+        "LOCKS_FILE",
+        "get_claimed_tasks",
+        "generate_task_id",
+        "STRICT_MODE",
+        "load_locks",
+        "get_current_session_tag",
+        "validate_task_changes"
+      ],
+      "imports": [
+        "utils.file_lock",
+        "datetime",
+        "sys",
+        "re",
+        "os",
+        "json",
+        "pathlib"
+      ],
+      "type": "module"
+    },
+    ".claude/scripts/work_queue.py": {
+      "exports": [
+        "claim_task",
+        "get_task_history",
+        "add_task",
+        "get_task",
+        "complete_task",
+        "remove_task",
+        "get_queue_stats",
+        "release_task",
+        "QUEUE_FILE",
+        "load_queue",
+        "STALE_CLAIM_MINUTES",
+        "release_stale_claims",
+        "list_tasks",
+        "SESSION_DIR"
+      ],
+      "imports": [
+        "datetime",
+        "sys",
+        "json",
+        "utils.file_lock",
+        "pathlib",
+        "uuid"
+      ],
+      "type": "module"
+    }
+  }
+}

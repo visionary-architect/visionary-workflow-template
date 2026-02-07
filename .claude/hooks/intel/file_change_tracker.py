@@ -37,11 +37,12 @@ def main():
             stdin_data = sys.stdin.read()
             if stdin_data:
                 data = json.loads(stdin_data)
-                file_path = data.get("tool_input", {}).get("file_path", "")
+                tool_input = data.get("tool_input", {})
+                file_path = tool_input.get("file_path", "") if isinstance(tool_input, dict) else ""
         except Exception:
             pass
 
-    if not file_path:
+    if not file_path or not isinstance(file_path, str):
         return
 
     # Normalize path
@@ -78,7 +79,7 @@ def load_frequency_data():
         }
 
     try:
-        with open(FREQUENCY_FILE) as f:
+        with open(FREQUENCY_FILE, encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return {
@@ -157,7 +158,7 @@ def save_frequency_data(data):
     """Save frequency data atomically."""
     temp_file = FREQUENCY_FILE.with_suffix(".tmp")
     try:
-        with open(temp_file, "w") as f:
+        with open(temp_file, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
         temp_file.replace(FREQUENCY_FILE)
     except Exception as e:

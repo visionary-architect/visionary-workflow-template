@@ -22,12 +22,18 @@ Usage:
     complete_task("task-abc123", "worker-1")
 """
 import json
+import sys
 import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "hooks"))
+from utils.file_lock import locked_json_rw
+
 SESSION_DIR = Path(".claude/session")
 QUEUE_FILE = SESSION_DIR / "work_queue.json"
+
+_QUEUE_DEFAULT = {"tasks": [], "metadata": {"last_updated": None, "total_completed": 0}}
 
 # Stale claim timeout (30 minutes)
 STALE_CLAIM_MINUTES = 30
@@ -45,23 +51,6 @@ def load_queue():
         return {"tasks": [], "metadata": {"last_updated": None, "total_completed": 0}}
 
 
-def save_queue(queue):
-    """Save the work queue atomically."""
-    SESSION_DIR.mkdir(parents=True, exist_ok=True)
-
-    queue["metadata"]["last_updated"] = datetime.now().isoformat()
-
-    temp_file = QUEUE_FILE.with_suffix(".tmp")
-    try:
-        with open(temp_file, "w", encoding="utf-8") as f:
-            json.dump(queue, f, indent=2)
-        temp_file.replace(QUEUE_FILE)
-    except Exception as e:
-        if temp_file.exists():
-            temp_file.unlink()
-        raise e
-
-
 def add_task(description, priority=2, context=None, depends_on=None, estimate=None):
     """
     Add a new task to the work queue.
@@ -76,49 +65,49 @@ def add_task(description, priority=2, context=None, depends_on=None, estimate=No
     Returns:
         The created task dict
     """
-    queue = load_queue()
+    with locked_json_rw(QUEUE_FILE, default=_QUEUE_DEFAULT) as (queue, save):
+        task = {
+            "id": f"task-{uuid.uuid4().hex[:8]}",
+            "description": description,
+            "priority": priority,
+            "status": "available",
+            "created_at": datetime.now().isoformat(),
+            "claimed_by": None,
+            "claimed_at": None,
+            "context": context,
+            "depends_on": depends_on or [],
+            "estimate": estimate,
+            "actual_duration": None,
+            "history": [
+                {
+                    "action": "created",
+                    "by": "system",
+                    "at": datetime.now().isoformat(),
+                }
+            ],
+        }
 
-    task = {
-        "id": f"task-{uuid.uuid4().hex[:8]}",
-        "description": description,
-        "priority": priority,
-        "status": "available",
-        "created_at": datetime.now().isoformat(),
-        "claimed_by": None,
-        "claimed_at": None,
-        "context": context,
-        "depends_on": depends_on or [],
-        "estimate": estimate,
-        "actual_duration": None,
-        "history": [
-            {
-                "action": "created",
-                "by": "system",
-                "at": datetime.now().isoformat(),
-            }
-        ],
-    }
+        # Check if dependencies exist and are not completed
+        missing_deps = []
+        if depends_on:
+            for dep_id in depends_on:
+                dep_task = None
+                for t in queue["tasks"]:
+                    if t["id"] == dep_id:
+                        dep_task = t
+                        break
+                if dep_task is None:
+                    missing_deps.append(dep_id)
+                elif dep_task["status"] != "completed":
+                    task["status"] = "blocked"
 
-    # Check if dependencies exist and are not completed
-    missing_deps = []
-    if depends_on:
-        for dep_id in depends_on:
-            dep_task = None
-            for t in queue["tasks"]:
-                if t["id"] == dep_id:
-                    dep_task = t
-                    break
-            if dep_task is None:
-                missing_deps.append(dep_id)
-            elif dep_task["status"] != "completed":
-                task["status"] = "blocked"
+        # Store warning about missing dependencies (won't block, but user should know)
+        if missing_deps:
+            task["missing_deps"] = missing_deps
 
-    # Store warning about missing dependencies (won't block, but user should know)
-    if missing_deps:
-        task["missing_deps"] = missing_deps
-
-    queue["tasks"].append(task)
-    save_queue(queue)
+        queue["tasks"].append(task)
+        queue["metadata"]["last_updated"] = datetime.now().isoformat()
+        save(queue)
 
     return task
 
@@ -170,34 +159,34 @@ def claim_task(task_id, session_tag):
     Returns:
         (success, message)
     """
-    queue = load_queue()
+    with locked_json_rw(QUEUE_FILE, default=_QUEUE_DEFAULT) as (queue, save):
+        for task in queue["tasks"]:
+            if task["id"] == task_id:
+                if task["status"] == "claimed":
+                    return False, f"Task already claimed by @{task['claimed_by']}"
 
-    for task in queue["tasks"]:
-        if task["id"] == task_id:
-            if task["status"] == "claimed":
-                return False, f"Task already claimed by @{task['claimed_by']}"
+                if task["status"] == "completed":
+                    return False, "Task already completed"
 
-            if task["status"] == "completed":
-                return False, "Task already completed"
+                if task["status"] == "blocked":
+                    return False, f"Task is blocked by dependencies: {task.get('depends_on', [])}"
 
-            if task["status"] == "blocked":
-                return False, f"Task is blocked by dependencies: {task.get('depends_on', [])}"
+                task["status"] = "claimed"
+                task["claimed_by"] = session_tag
+                task["claimed_at"] = datetime.now().isoformat()
 
-            task["status"] = "claimed"
-            task["claimed_by"] = session_tag
-            task["claimed_at"] = datetime.now().isoformat()
+                # Add to history
+                if "history" not in task:
+                    task["history"] = []
+                task["history"].append({
+                    "action": "claimed",
+                    "by": session_tag,
+                    "at": datetime.now().isoformat(),
+                })
 
-            # Add to history
-            if "history" not in task:
-                task["history"] = []
-            task["history"].append({
-                "action": "claimed",
-                "by": session_tag,
-                "at": datetime.now().isoformat(),
-            })
-
-            save_queue(queue)
-            return True, f"Task claimed by @{session_tag}"
+                queue["metadata"]["last_updated"] = datetime.now().isoformat()
+                save(queue)
+                return True, f"Task claimed by @{session_tag}"
 
     return False, "Task not found"
 
@@ -213,29 +202,29 @@ def release_task(task_id, released_by=None):
     Returns:
         (success, message)
     """
-    queue = load_queue()
+    with locked_json_rw(QUEUE_FILE, default=_QUEUE_DEFAULT) as (queue, save):
+        for task in queue["tasks"]:
+            if task["id"] == task_id:
+                if task["status"] != "claimed":
+                    return False, "Task is not claimed"
 
-    for task in queue["tasks"]:
-        if task["id"] == task_id:
-            if task["status"] != "claimed":
-                return False, "Task is not claimed"
+                old_claimer = task["claimed_by"]
+                task["status"] = "available"
+                task["claimed_by"] = None
+                task["claimed_at"] = None
 
-            old_claimer = task["claimed_by"]
-            task["status"] = "available"
-            task["claimed_by"] = None
-            task["claimed_at"] = None
+                # Add to history
+                if "history" not in task:
+                    task["history"] = []
+                task["history"].append({
+                    "action": "released",
+                    "by": released_by or old_claimer or "system",
+                    "at": datetime.now().isoformat(),
+                })
 
-            # Add to history
-            if "history" not in task:
-                task["history"] = []
-            task["history"].append({
-                "action": "released",
-                "by": released_by or old_claimer or "system",
-                "at": datetime.now().isoformat(),
-            })
-
-            save_queue(queue)
-            return True, "Task released"
+                queue["metadata"]["last_updated"] = datetime.now().isoformat()
+                save(queue)
+                return True, "Task released"
 
     return False, "Task not found"
 
@@ -251,48 +240,48 @@ def complete_task(task_id, session_tag):
     Returns:
         (success, message)
     """
-    queue = load_queue()
+    with locked_json_rw(QUEUE_FILE, default=_QUEUE_DEFAULT) as (queue, save):
+        for task in queue["tasks"]:
+            if task["id"] == task_id:
+                if task["status"] == "completed":
+                    return False, "Task already completed"
 
-    for task in queue["tasks"]:
-        if task["id"] == task_id:
-            if task["status"] == "completed":
-                return False, "Task already completed"
+                # Allow completion even if claimed by different session (with warning)
+                if task["claimed_by"] and task["claimed_by"] != session_tag:
+                    print(f"Warning: Task was claimed by @{task['claimed_by']}, "
+                          f"completed by @{session_tag}")
 
-            # Allow completion even if claimed by different session (with warning)
-            if task["claimed_by"] and task["claimed_by"] != session_tag:
-                print(f"Warning: Task was claimed by @{task['claimed_by']}, "
-                      f"completed by @{session_tag}")
+                task["status"] = "completed"
+                task["completed_by"] = session_tag
+                task["completed_at"] = datetime.now().isoformat()
 
-            task["status"] = "completed"
-            task["completed_by"] = session_tag
-            task["completed_at"] = datetime.now().isoformat()
+                # Calculate actual duration if claimed_at exists
+                if task.get("claimed_at"):
+                    try:
+                        claimed = datetime.fromisoformat(task["claimed_at"])
+                        completed = datetime.fromisoformat(task["completed_at"])
+                        duration_mins = int((completed - claimed).total_seconds() / 60)
+                        task["actual_duration"] = duration_mins
+                    except Exception:
+                        pass
 
-            # Calculate actual duration if claimed_at exists
-            if task.get("claimed_at"):
-                try:
-                    claimed = datetime.fromisoformat(task["claimed_at"])
-                    completed = datetime.fromisoformat(task["completed_at"])
-                    duration_mins = int((completed - claimed).total_seconds() / 60)
-                    task["actual_duration"] = duration_mins
-                except Exception:
-                    pass
+                # Add to history
+                if "history" not in task:
+                    task["history"] = []
+                task["history"].append({
+                    "action": "completed",
+                    "by": session_tag,
+                    "at": datetime.now().isoformat(),
+                })
 
-            # Add to history
-            if "history" not in task:
-                task["history"] = []
-            task["history"].append({
-                "action": "completed",
-                "by": session_tag,
-                "at": datetime.now().isoformat(),
-            })
+                queue["metadata"]["total_completed"] = queue["metadata"].get("total_completed", 0) + 1
 
-            queue["metadata"]["total_completed"] = queue["metadata"].get("total_completed", 0) + 1
+                # Unblock any tasks that depended on this one
+                _unblock_dependent_tasks(queue, task_id)
 
-            # Unblock any tasks that depended on this one
-            _unblock_dependent_tasks(queue, task_id)
-
-            save_queue(queue)
-            return True, "Task completed"
+                queue["metadata"]["last_updated"] = datetime.now().isoformat()
+                save(queue)
+                return True, "Task completed"
 
     return False, "Task not found"
 
@@ -333,51 +322,52 @@ def remove_task(task_id):
     Returns:
         (success, message)
     """
-    queue = load_queue()
-
-    for i, task in enumerate(queue["tasks"]):
-        if task["id"] == task_id:
-            del queue["tasks"][i]
-            save_queue(queue)
-            return True, "Task removed"
+    with locked_json_rw(QUEUE_FILE, default=_QUEUE_DEFAULT) as (queue, save):
+        for i, task in enumerate(queue["tasks"]):
+            if task["id"] == task_id:
+                del queue["tasks"][i]
+                queue["metadata"]["last_updated"] = datetime.now().isoformat()
+                save(queue)
+                return True, "Task removed"
 
     return False, "Task not found"
 
 
 def release_stale_claims():
     """Release any claims older than STALE_CLAIM_MINUTES."""
-    queue = load_queue()
-    now = datetime.now()
-    stale_threshold = timedelta(minutes=STALE_CLAIM_MINUTES)
-    released = []
+    with locked_json_rw(QUEUE_FILE, default=_QUEUE_DEFAULT) as (queue, save):
+        now = datetime.now()
+        stale_threshold = timedelta(minutes=STALE_CLAIM_MINUTES)
+        released = []
 
-    for task in queue["tasks"]:
-        if task["status"] == "claimed" and task.get("claimed_at"):
-            try:
-                claimed_at = datetime.fromisoformat(task["claimed_at"])
-                if now - claimed_at > stale_threshold:
-                    old_claimer = task["claimed_by"]
-                    released.append((task["id"], old_claimer))
-                    task["status"] = "available"
-                    task["claimed_by"] = None
-                    task["claimed_at"] = None
+        for task in queue["tasks"]:
+            if task["status"] == "claimed" and task.get("claimed_at"):
+                try:
+                    claimed_at = datetime.fromisoformat(task["claimed_at"])
+                    if now - claimed_at > stale_threshold:
+                        old_claimer = task["claimed_by"]
+                        released.append((task["id"], old_claimer))
+                        task["status"] = "available"
+                        task["claimed_by"] = None
+                        task["claimed_at"] = None
 
-                    # Add to history
-                    if "history" not in task:
-                        task["history"] = []
-                    task["history"].append({
-                        "action": "released",
-                        "by": "system",
-                        "at": now.isoformat(),
-                        "reason": f"stale claim (was @{old_claimer})",
-                    })
-            except Exception:
-                pass
+                        # Add to history
+                        if "history" not in task:
+                            task["history"] = []
+                        task["history"].append({
+                            "action": "released",
+                            "by": "system",
+                            "at": now.isoformat(),
+                            "reason": f"stale claim (was @{old_claimer})",
+                        })
+                except Exception:
+                    pass
 
-    if released:
-        save_queue(queue)
-        for task_id, session_tag in released:
-            print(f"Released stale claim: {task_id} (was @{session_tag})")
+        if released:
+            queue["metadata"]["last_updated"] = datetime.now().isoformat()
+            save(queue)
+            for task_id, session_tag in released:
+                print(f"Released stale claim: {task_id} (was @{session_tag})")
 
     return released
 

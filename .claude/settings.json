@@ -5,6 +5,28 @@
     "CLAUDE_SESSION_TAG": "main"
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/lifecycle/session_start.py",
+            "timeout": 15000
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/lifecycle/user_prompt_submit.py --log-only --store-last-prompt --name-agent --validate",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": ".*",
@@ -46,6 +68,17 @@
         ]
       }
     ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/lifecycle/permission_request.py --auto-allow",
+            "timeout": 3000
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
@@ -79,6 +112,18 @@
             "command": "python .claude/hooks/intel/file_change_tracker.py",
             "async": true,
             "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/validators/ruff_validator.py",
+            "async": false,
+            "timeout": 120000
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/validators/ty_validator.py",
+            "async": false,
+            "timeout": 120000
           }
         ]
       },
@@ -117,6 +162,53 @@
         ]
       }
     ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/lifecycle/post_tool_use_failure.py",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/lifecycle/notification.py",
+            "async": true,
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/lifecycle/subagent_start.py",
+            "async": true,
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/lifecycle/subagent_stop.py --notify --summarize",
+            "async": true,
+            "timeout": 15000
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
@@ -128,26 +220,65 @@
           {
             "type": "command",
             "command": "python .claude/hooks/session/auto_snapshot.py",
+            "async": true,
             "timeout": 5000
           },
           {
             "type": "command",
             "command": "python .claude/hooks/session/auto_devlog.py",
+            "async": true,
             "timeout": 5000
           },
           {
             "type": "command",
+            "command": "python .claude/hooks/lifecycle/stop_completion.py",
+            "async": true,
+            "timeout": 10000
+          },
+          {
+            "type": "command",
             "command": "python .claude/hooks/session/session_cleanup.py",
+            "async": true,
             "timeout": 5000
           },
           {
             "type": "command",
             "command": "python .claude/hooks/session/session_maintenance.py",
+            "async": true,
             "timeout": 10000
           }
         ]
       }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/lifecycle/pre_compact.py --backup",
+            "async": true,
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/lifecycle/session_end.py",
+            "async": true,
+            "timeout": 5000
+          }
+        ]
+      }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "python .claude/status_lines/v6_context_bar.py",
+    "timeout": 3000
   },
   "permissions": {
     "allow": [
@@ -171,7 +302,11 @@
       "Bash(find*)",
       "Bash(python .claude/hooks/*)",
       "Bash(python3 .claude/hooks/*)",
-      "Bash(uv run .claude/hooks/*)"
+      "Bash(uv run .claude/hooks/*)",
+      "Bash(ruff *)",
+      "Bash(uv run ruff*)",
+      "Bash(uv run mypy*)",
+      "Bash(uv run pytest*)"
     ]
   }
 }

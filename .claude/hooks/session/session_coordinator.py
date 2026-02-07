@@ -17,6 +17,9 @@ import hashlib
 from datetime import datetime, timedelta
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from utils.file_lock import locked_json_rw, locked_multi_json_rw
+
 SESSION_DIR = Path(".claude/session")
 SESSIONS_FILE = SESSION_DIR / "sessions.json"
 LOCKS_FILE = SESSION_DIR / "task_locks.json"
@@ -157,88 +160,89 @@ def load_sessions():
         return {}
 
 
-def save_sessions(sessions):
-    """Save sessions registry atomically."""
-    temp_file = SESSIONS_FILE.with_suffix(".tmp")
-    try:
-        with open(temp_file, "w", encoding="utf-8") as f:
-            json.dump(sessions, f, indent=2)
-        temp_file.replace(SESSIONS_FILE)
-    except Exception as e:
-        print(f"Warning: Failed to save sessions: {e}")
-        if temp_file.exists():
-            temp_file.unlink()
-
-
 def register_session(session_id, session_tag):
-    """Register or update session heartbeat."""
-    sessions = load_sessions()
+    """Register or update session heartbeat with file locking."""
+    with locked_json_rw(SESSIONS_FILE, default={}) as (sessions, save):
+        now = datetime.now().isoformat()
 
-    now = datetime.now().isoformat()
+        if session_id not in sessions:
+            # New session
+            sessions[session_id] = {
+                "tag": session_tag,
+                "started": now,
+                "last_seen": now,
+                "tool_count": 1,
+                "claimed_tasks": []
+            }
+            print(f"Session registered: {session_tag} ({session_id[:8]})")
+        else:
+            # Update heartbeat
+            sessions[session_id]["last_seen"] = now
+            sessions[session_id]["tool_count"] = sessions[session_id].get("tool_count", 0) + 1
 
-    if session_id not in sessions:
-        # New session
-        sessions[session_id] = {
-            "tag": session_tag,
-            "started": now,
-            "last_seen": now,
-            "tool_count": 1,
-            "claimed_tasks": []
-        }
-        print(f"Session registered: {session_tag} ({session_id[:8]})")
-    else:
-        # Update heartbeat
-        sessions[session_id]["last_seen"] = now
-        sessions[session_id]["tool_count"] = sessions[session_id].get("tool_count", 0) + 1
-
-    save_sessions(sessions)
+        save(sessions)
 
 
 def cleanup_stale_sessions():
-    """Remove sessions with no activity for >30 minutes."""
-    sessions = load_sessions()
-    now = datetime.now()
-    stale_threshold = timedelta(minutes=STALE_THRESHOLD_MINUTES)
+    """Remove sessions with no activity for >30 minutes. Uses multi-file lock."""
+    with locked_multi_json_rw(
+        (SESSIONS_FILE, {}), (LOCKS_FILE, {})
+    ) as entries:
+        sessions, save_sessions_fn = entries[0]
+        locks, save_locks_fn = entries[1]
 
-    stale_ids = []
-    for session_id, session in sessions.items():
-        try:
-            last_seen = datetime.fromisoformat(session.get("last_seen", ""))
-            if now - last_seen > stale_threshold:
-                stale_ids.append(session_id)
-        except Exception:
-            pass
+        now = datetime.now()
+        stale_threshold = timedelta(minutes=STALE_THRESHOLD_MINUTES)
 
-    if stale_ids:
+        stale_ids = []
+        for session_id, session in sessions.items():
+            try:
+                last_seen = datetime.fromisoformat(session.get("last_seen", ""))
+                if now - last_seen > stale_threshold:
+                    stale_ids.append(session_id)
+            except Exception:
+                pass
+
+        if not stale_ids:
+            return
+
+        locks_changed = False
         for sid in stale_ids:
             tag = sessions[sid].get("tag", "unknown")
             claimed = sessions[sid].get("claimed_tasks", [])
 
-            # Release any claimed tasks
+            # Release any claimed tasks (inline — both files are locked)
             if claimed:
-                release_task_claims(sid, claimed)
+                for task_id in claimed:
+                    if task_id in locks:
+                        if locks[task_id].get("session_id") == sid:
+                            del locks[task_id]
+                            locks_changed = True
                 print(f"Released {len(claimed)} claims from stale session @{tag}")
 
             del sessions[sid]
 
-        save_sessions(sessions)
+        save_sessions_fn(sessions)
+        if locks_changed:
+            save_locks_fn(locks)
         print(f"Cleaned up {len(stale_ids)} stale session(s)")
 
 
 def release_task_claims(session_id, task_ids):
-    """Release task claims held by a session."""
-    locks = load_locks()
-
-    for task_id in task_ids:
-        if task_id in locks:
-            if locks[task_id].get("session_id") == session_id:
-                del locks[task_id]
-
-    save_locks(locks)
+    """Release task claims held by a session with file locking."""
+    with locked_json_rw(LOCKS_FILE, default={}) as (locks, save):
+        changed = False
+        for task_id in task_ids:
+            if task_id in locks:
+                if locks[task_id].get("session_id") == session_id:
+                    del locks[task_id]
+                    changed = True
+        if changed:
+            save(locks)
 
 
 def load_locks():
-    """Load task locks."""
+    """Load task locks (read-only, no locking needed)."""
     if not LOCKS_FILE.exists():
         return {}
 
@@ -247,18 +251,6 @@ def load_locks():
             return json.load(f)
     except Exception:
         return {}
-
-
-def save_locks(locks):
-    """Save task locks atomically."""
-    temp_file = LOCKS_FILE.with_suffix(".tmp")
-    try:
-        with open(temp_file, "w", encoding="utf-8") as f:
-            json.dump(locks, f, indent=2)
-        temp_file.replace(LOCKS_FILE)
-    except Exception:
-        if temp_file.exists():
-            temp_file.unlink()
 
 
 def check_conflicts(current_session_id):
@@ -322,90 +314,76 @@ def load_file_locks():
         return {}
 
 
-def save_file_locks(locks):
-    """Save file locks atomically."""
-    temp_file = FILE_LOCKS_FILE.with_suffix(".tmp")
-    try:
-        with open(temp_file, "w", encoding="utf-8") as f:
-            json.dump(locks, f, indent=2)
-        temp_file.replace(FILE_LOCKS_FILE)
-    except Exception:
-        if temp_file.exists():
-            temp_file.unlink()
-
-
 def claim_file(file_path, session_id, session_tag):
-    """Claim a file for editing. Returns (success, conflict_info)."""
-    locks = load_file_locks()
+    """Claim a file for editing with file locking. Returns (success, conflict_info)."""
     now = datetime.now()
-
-    # Normalize path
     file_key = str(Path(file_path).resolve())
 
-    if file_key in locks:
-        lock = locks[file_key]
-        lock_session = lock.get("session_id")
+    with locked_json_rw(FILE_LOCKS_FILE, default={}) as (locks, save):
+        if file_key in locks:
+            lock = locks[file_key]
+            lock_session = lock.get("session_id")
 
-        # Check if it's our own lock
-        if lock_session == session_id:
-            # Update timestamp
-            locks[file_key]["last_touched"] = now.isoformat()
-            save_file_locks(locks)
-            return True, None
+            # Check if it's our own lock
+            if lock_session == session_id:
+                # Update timestamp
+                locks[file_key]["last_touched"] = now.isoformat()
+                save(locks)
+                return True, None
 
-        # Check if lock is stale (>10 minutes)
-        try:
-            lock_time = datetime.fromisoformat(lock.get("last_touched", ""))
-            if (now - lock_time).total_seconds() > 600:
-                # Stale lock, we can take over
+            # Check if lock is stale (>10 minutes)
+            try:
+                lock_time = datetime.fromisoformat(lock.get("last_touched", ""))
+                if (now - lock_time).total_seconds() > 600:
+                    # Stale lock, we can take over
+                    pass
+                else:
+                    # Active conflict
+                    return False, {
+                        "file": file_path,
+                        "held_by": lock.get("session_tag", "unknown"),
+                        "since": lock.get("claimed_at", "unknown")
+                    }
+            except Exception:
                 pass
-            else:
-                # Active conflict
-                return False, {
-                    "file": file_path,
-                    "held_by": lock.get("session_tag", "unknown"),
-                    "since": lock.get("claimed_at", "unknown")
-                }
-        except Exception:
-            pass
 
-    # Claim the file
-    locks[file_key] = {
-        "session_id": session_id,
-        "session_tag": session_tag,
-        "claimed_at": now.isoformat(),
-        "last_touched": now.isoformat(),
-        "file_path": file_path
-    }
-    save_file_locks(locks)
+        # Claim the file
+        locks[file_key] = {
+            "session_id": session_id,
+            "session_tag": session_tag,
+            "claimed_at": now.isoformat(),
+            "last_touched": now.isoformat(),
+            "file_path": file_path
+        }
+        save(locks)
     return True, None
 
 
 def release_file(file_path, session_id):
-    """Release a file lock."""
-    locks = load_file_locks()
+    """Release a file lock with file locking."""
     file_key = str(Path(file_path).resolve())
 
-    if file_key in locks:
-        if locks[file_key].get("session_id") == session_id:
-            del locks[file_key]
-            save_file_locks(locks)
-            return True
+    with locked_json_rw(FILE_LOCKS_FILE, default={}) as (locks, save):
+        if file_key in locks:
+            if locks[file_key].get("session_id") == session_id:
+                del locks[file_key]
+                save(locks)
+                return True
     return False
 
 
 def release_all_file_locks(session_id):
-    """Release all file locks held by a session."""
-    locks = load_file_locks()
-    released = []
+    """Release all file locks held by a session with file locking."""
+    with locked_json_rw(FILE_LOCKS_FILE, default={}) as (locks, save):
+        released = []
 
-    for file_key in list(locks.keys()):
-        if locks[file_key].get("session_id") == session_id:
-            released.append(locks[file_key].get("file_path", file_key))
-            del locks[file_key]
+        for file_key in list(locks.keys()):
+            if locks[file_key].get("session_id") == session_id:
+                released.append(locks[file_key].get("file_path", file_key))
+                del locks[file_key]
 
-    if released:
-        save_file_locks(locks)
+        if released:
+            save(locks)
 
     return released
 

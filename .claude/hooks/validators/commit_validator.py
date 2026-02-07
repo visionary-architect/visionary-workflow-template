@@ -44,7 +44,8 @@ def validate(target_path: str = None) -> dict:
             ['git', 'log', '-1', '--pretty=%B'],
             capture_output=True,
             text=True,
-            check=True
+            check=True,
+            timeout=5
         )
         commit_message = result.stdout.strip()
 

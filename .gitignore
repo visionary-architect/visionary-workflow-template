@@ -100,5 +100,17 @@ temp/
 *.bak
 
 # =============================================================================
+# Hooks runtime data (generated at runtime, not tracked)
+# =============================================================================
+.claude/data/sessions/*.json
+.claude/data/sessions/*_pre_compact_*.jsonl
+.claude/data/sessions/*_errors.jsonl
+.claude/data/tts_queue/
+.claude/session/
+.claude/hooks/**/__pycache__/
+.claude/scripts/__pycache__/
+.claude/status_lines/__pycache__/
+
+# =============================================================================
 # Project-specific (add your own below)
 # =============================================================================

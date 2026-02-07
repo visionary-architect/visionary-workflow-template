@@ -7,8 +7,8 @@ allowed-tools:
   - bash
   - grep
   - glob
-# OPTIONAL: Uncomment to enable structured validation output
-# This makes the agent return a machine-readable validation result
+# OPTIONAL: Uncomment to enable structured validation output.
+# First create a test_validator.py (use TEMPLATE_validator.py as a base).
 # hooks:
 #   stop:
 #     - command: "python ${CLAUDE_PROJECT_DIR}/.claude/hooks/validators/test_validator.py"

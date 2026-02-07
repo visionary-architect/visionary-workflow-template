@@ -220,9 +220,11 @@ def rotate_events():
 
                     # Parse timestamp
                     try:
-                        # Handle various ISO formats
-                        ts = timestamp.split("+")[0].split("-0")[0]  # Remove timezone
-                        event_date = datetime.fromisoformat(ts)
+                        # Python 3.11+ fromisoformat handles timezone-aware strings
+                        event_date = datetime.fromisoformat(timestamp)
+                        # Make timezone-naive for comparison
+                        if event_date.tzinfo is not None:
+                            event_date = event_date.replace(tzinfo=None)
 
                         if event_date < cutoff_date:
                             archive_events.append(line)
