@@ -1,7 +1,7 @@
 {
   "_comment": "Codebase index",
   "_version": "1.0",
-  "_lastUpdated": "2026-02-06T19:03:47.832151",
+  "_lastUpdated": "2026-02-06T19:19:40.977784",
   "files": {
     ".claude/status_lines/v1_basic.py": {
       "exports": [
@@ -312,15 +312,15 @@
     },
     ".claude/hooks/validators/dangerous_command_checker.py": {
       "exports": [
-        "DANGEROUS_PATTERNS",
         "SAFE_ENV_PATTERNS",
-        "main"
+        "main",
+        "DANGEROUS_PATTERNS"
       ],
       "imports": [
-        "re",
         "os",
+        "json",
         "sys",
-        "json"
+        "re"
       ],
       "type": "module"
     },
@@ -648,6 +648,41 @@
         "pathlib",
         "sys",
         "json"
+      ],
+      "type": "module"
+    },
+    ".claude/scripts/e2e_full_test.py": {
+      "exports": [
+        "test_status_lines",
+        "BASE",
+        "SCRIPTS_DIR",
+        "PASS_COUNT",
+        "test_session_coordination",
+        "RESULTS",
+        "SESSION_DIR",
+        "test_encoding",
+        "test_integration",
+        "STATUS_DIR",
+        "main",
+        "HOOKS_DIR",
+        "FAIL_COUNT",
+        "test_hooks",
+        "run_hook",
+        "WARN_COUNT",
+        "record",
+        "test_utils",
+        "make_mock_stdin"
+      ],
+      "imports": [
+        "json",
+        "pathlib",
+        "os",
+        "subprocess",
+        "tempfile",
+        "time",
+        "sys",
+        "shutil",
+        "importlib.util"
       ],
       "type": "module"
     }

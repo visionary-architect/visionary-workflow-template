@@ -31,7 +31,7 @@ DANGEROUS_PATTERNS = [
     (r"\bgit\s+stash\s+clear\b", "git stash clear removes all stashed changes"),
 
     # File deletion
-    (r"\brm\s+-rf?\s+/\b", "rm -rf / is catastrophically dangerous"),
+    (r"\brm\s+-rf?\s+/", "rm -rf / is catastrophically dangerous"),
     (r"\brm\s+-rf?\s+\*\b", "rm -rf * removes all files in current directory"),
     (r"\brm\s+-rf?\s+\.\.\b", "rm -rf .. removes parent directory"),
     (r"\brm\s+-rf?\s+~\b", "rm -rf ~ removes entire home directory"),
