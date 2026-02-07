@@ -1,18 +1,16 @@
-Phase 3: Session coordination + work queue + file locking
-### Session: 2026-02-06 (Auto-captured at 19:19)
-**Note:** This session ended without /pause-work.
+# Development Log
 
-**Commits:**
-- fix: resolve Windows encoding issues, update commands and README
-- feat: integrate hooks mastery capabilities with file locking
+> Auto-maintained by the AI assistant. Records session history and progress.
+> The AI reads this at the start of each session.
 
-**Uncommitted changes:**
-- .planning/intel/conventions.json
-- .planning/intel/index.json
-- .planning/intel/summary.md
-- DEVLOG.md
+---
 
-**Tasks in progress:**
-- Phase 2: Hook runtime testing â€” all hooks with mock stdin
-- Phase 3: Session coordination + work queue + file locking
+## Milestone: v1.0
 
+**Status:** Not Started
+
+---
+
+## Recent Sessions
+
+<!-- Sessions are auto-recorded here by /pause-work and the auto-devlog hook -->
